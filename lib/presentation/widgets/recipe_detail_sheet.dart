@@ -112,82 +112,94 @@ class _SheetTop extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final isFavorite = state.isFavorite(meal.id);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 12),
-        Center(
-          child: Container(
-            width: 44,
-            height: 4,
-            decoration: BoxDecoration(
-              color: muted,
-              borderRadius: BorderRadius.circular(4),
+    return SizedBox(
+      height: 292,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(32),
             ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
             child: AppNetworkImage(
-              imageUrl: meal.mediumThumbnail,
+              imageUrl: meal.largeThumbnail,
               width: double.infinity,
-              height: 190,
+              height: 292,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(22, 18, 22, 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  meal.name,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              DecoratedBox(
+          Positioned(
+            top: 12,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                width: 44,
+                height: 4,
                 decoration: BoxDecoration(
-                  color: isFavorite ? mint : surface2,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: IconButton(
-                  key: const Key('sheet-favorite-button'),
-                  onPressed: () => state.toggleFavorite(meal),
-                  icon: Icon(
-                    isFavorite
-                        ? CupertinoIcons.heart_fill
-                        : CupertinoIcons.heart,
-                  ),
-                  color: isFavorite ? bg : mint,
-                  tooltip: 'Favorite',
+                  color: Colors.white.withOpacity(.78),
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              if (meal.category?.trim().isNotEmpty == true)
-                _SheetTag(text: meal.category!),
-              if (meal.area?.trim().isNotEmpty == true)
-                _SheetTag(text: meal.area!),
-            ],
+          Positioned(
+            top: 20,
+            right: 20,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: bg.withOpacity(.78),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: IconButton(
+                key: const Key('sheet-favorite-button'),
+                onPressed: () => state.toggleFavorite(meal),
+                icon: Icon(
+                  isFavorite ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                ),
+                color: isFavorite ? mint : Colors.white,
+                tooltip: 'Favorite',
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-      ],
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              color: bg.withOpacity(.90),
+              padding: const EdgeInsets.fromLTRB(22, 14, 22, 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    meal.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  if (meal.category?.trim().isNotEmpty == true ||
+                      meal.area?.trim().isNotEmpty == true) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        if (meal.category?.trim().isNotEmpty == true)
+                          _SheetTag(text: meal.category!),
+                        if (meal.area?.trim().isNotEmpty == true)
+                          _SheetTag(text: meal.area!),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -325,7 +337,7 @@ class IngredientList extends StatelessWidget {
     }
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: surface2.withOpacity(.45),
+        color: readingSurface.withOpacity(.55),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -352,6 +364,8 @@ class IngredientList extends StatelessWidget {
                     Flexible(
                       child: Text(
                         ingredients[index].measure,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.right,
                         style: const TextStyle(fontSize: 14, color: muted),
                       ),

@@ -60,6 +60,29 @@ void main() {
     expect(selected, 1);
   });
 
+  testWidgets('Home and Saved swipe in a pager while header stays fixed',
+      (tester) async {
+    final state = AppState(_UiRepository());
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: state,
+        child: const MaterialApp(home: HomePage()),
+      ),
+    );
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    final header = find.byKey(const Key('top-left-network-nav'));
+    final before = tester.getRect(header);
+    expect(find.byType(PageView), findsOneWidget);
+    await tester.drag(find.byType(PageView), const Offset(-320, 0));
+    await tester.pumpAndSettle();
+    final after = tester.getRect(header);
+    expect(after.top, before.top);
+    expect(after.left, before.left);
+    expect(find.byKey(const Key('top-nav-saved')), findsOneWidget);
+  });
+
   testWidgets('top action pill opens notifications', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -74,7 +97,8 @@ void main() {
     expect(find.text("You're all caught up"), findsOneWidget);
   });
 
-  testWidgets('bottom dock exposes search only', (tester) async {
+  testWidgets('bottom search is rounded, translucent, and accessible',
+      (tester) async {
     final state = AppState(_UiRepository());
     await tester.pumpWidget(
       MaterialApp(
@@ -86,6 +110,9 @@ void main() {
         ),
       ),
     );
+    final pill = find.byKey(const Key('bottom-search-pill'));
+    expect(pill, findsOneWidget);
+    expect(tester.getSize(pill).height, greaterThanOrEqualTo(58));
     expect(find.byKey(const Key('bottom-search-field')), findsOneWidget);
     expect(find.byKey(const Key('bottom-notification-button')), findsNothing);
   });
@@ -105,6 +132,50 @@ void main() {
     expect(find.text('Toast Soup ditambahkan ke Saved'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 2700));
     expect(find.text('Toast Soup ditambahkan ke Saved'), findsNothing);
+  });
+
+  testWidgets('root app toast stays mounted while modal is open',
+      (tester) async {
+    final state = AppState(_UiRepository());
+    const meal = Meal(id: '2', name: 'Layered Toast', thumb: '');
+    await state.toggleFavorite(meal);
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: state,
+        child: MaterialApp(
+          builder: (context, child) => Stack(
+            fit: StackFit.expand,
+            children: [
+              child ?? const SizedBox.shrink(),
+              const FavoriteToastOverlay(),
+            ],
+          ),
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: TextButton(
+                  onPressed: () => showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (_) => const SizedBox(
+                      height: 500,
+                      child: Center(child: Text('Detail sheet')),
+                    ),
+                  ),
+                  child: const Text('Open detail'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Open detail'));
+    await tester.pumpAndSettle();
+    expect(find.text('Detail sheet'), findsOneWidget);
+    expect(find.text('Layered Toast ditambahkan ke Saved'), findsOneWidget);
+    expect(find.byType(FavoriteToast), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 2700));
   });
 
   testWidgets('old chat-node navigation is not rendered', (tester) async {

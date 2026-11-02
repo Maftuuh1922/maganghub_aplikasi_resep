@@ -17,8 +17,10 @@ class BottomDock extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Material(
-          color: surface,
-          borderRadius: BorderRadius.circular(20),
+          key: const Key('bottom-search-pill'),
+          color: surface.withOpacity(.88),
+          borderRadius: BorderRadius.circular(30),
+          clipBehavior: Clip.antiAlias,
           child: TextField(
             key: const Key('bottom-search-field'),
             controller: controller,
@@ -26,13 +28,30 @@ class BottomDock extends StatelessWidget {
             decoration: InputDecoration(
               hintText: 'Search recipes...',
               prefixIcon: const Icon(CupertinoIcons.search),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 52,
+                minHeight: 58,
+              ),
               filled: true,
-              fillColor: surface,
+              fillColor: surface.withOpacity(.88),
+              isDense: true,
+              constraints: const BoxConstraints(minHeight: 58),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(30),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: const BorderSide(color: mint, width: 1),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 17,
+              ),
             ),
           ),
         ),

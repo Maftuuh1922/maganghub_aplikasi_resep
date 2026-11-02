@@ -6,6 +6,7 @@ import 'data/repositories/meal_repository.dart';
 import 'data/services/meal_api_service.dart';
 import 'logic/app_state.dart';
 import 'presentation/pages/onboarding_page.dart';
+import 'presentation/widgets/favorite_toast.dart';
 
 export 'data/models/category.dart';
 export 'data/models/ingredient.dart';
@@ -42,6 +43,13 @@ class PantomMealsApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Pantom Meals',
         theme: buildAppTheme(),
+        builder: (context, child) => Stack(
+          fit: StackFit.expand,
+          children: [
+            child ?? const SizedBox.shrink(),
+            const FavoriteToastOverlay(),
+          ],
+        ),
         home: const OnboardingGate(),
       );
 }

@@ -21,46 +21,64 @@ class MealCard extends StatelessWidget {
         meal: meal,
         repository: state.repository,
       ),
-      child: Container(
-        decoration: BoxDecoration(
-            color: surface, borderRadius: BorderRadius.circular(24)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Expanded(
-            child: Stack(children: [
-              AppNetworkImage(
-                imageUrl: meal.smallThumbnail,
-                width: double.infinity,
-                height: double.infinity,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () => state.toggleFavorite(meal),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        color: bg.withOpacity(.78), shape: BoxShape.circle),
-                    child: Icon(
-                        state.isFavorite(meal.id)
-                            ? CupertinoIcons.heart_fill
-                            : CupertinoIcons.heart,
-                        color: state.isFavorite(meal.id) ? mint : Colors.white),
-                  ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          AppNetworkImage(
+            imageUrl: meal.smallThumbnail,
+            width: double.infinity,
+            height: double.infinity,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(14, 36, 48, 14),
+              decoration: BoxDecoration(
+                color: bg.withOpacity(.78),
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(24),
                 ),
               ),
-            ]),
+              child: Text(
+                meal.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
           ),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(13, 12, 10, 14),
-              child: Text(meal.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w700))),
-        ]),
+          Positioned(
+            top: 10,
+            right: 10,
+            child: Material(
+              color: bg.withOpacity(.78),
+              shape: const CircleBorder(),
+              child: IconButton(
+                tooltip: state.isFavorite(meal.id)
+                    ? 'Remove from Saved'
+                    : 'Add to Saved',
+                onPressed: () => state.toggleFavorite(meal),
+                constraints: const BoxConstraints(
+                  minWidth: 48,
+                  minHeight: 48,
+                ),
+                icon: Icon(
+                  state.isFavorite(meal.id)
+                      ? CupertinoIcons.heart_fill
+                      : CupertinoIcons.heart,
+                  size: 22,
+                  color: state.isFavorite(meal.id) ? mint : Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
