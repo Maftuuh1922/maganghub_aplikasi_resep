@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../logic/app_state.dart';
 import '../widgets/bottom_dock.dart';
+import '../widgets/favorite_toast.dart';
 import '../widgets/header.dart';
 import '../widgets/list_controls.dart';
 import '../widgets/meal_card.dart';
@@ -34,8 +35,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator(color: mint)),
-          );
+              body: Center(child: CircularProgressIndicator(color: mint)));
         }
         return _buildCatalog(state);
       },
@@ -61,15 +61,15 @@ class _HomePageState extends State<HomePage> {
                       selectedTab: selectedTab,
                       onTabChanged: (value) =>
                           setState(() => selectedTab = value),
+                      hasNotification: state.hasNewFavoriteNotification,
+                      onNotificationRead: state.markNotificationsRead,
                     ),
                   ),
-                  if (!showingSaved)
-                    const SliverToBoxAdapter(child: SizedBox(height: 8)),
                   if (!showingSaved && state.searchQuery.isEmpty)
                     SliverToBoxAdapter(child: CategoryStrip(state: state)),
                   SliverToBoxAdapter(
-                    child: SectionHeader(state: state, favorites: showingSaved),
-                  ),
+                      child:
+                          SectionHeader(state: state, favorites: showingSaved)),
                   if (state.isLoading)
                     const SliverToBoxAdapter(
                       child: Padding(
@@ -80,20 +80,16 @@ class _HomePageState extends State<HomePage> {
                     ),
                   if (!state.isLoading && state.errorMessage != null)
                     SliverToBoxAdapter(
-                      child: ErrorView(
-                        message: state.errorMessage!,
-                        retry: state.retry,
-                      ),
-                    ),
+                        child: ErrorView(
+                            message: state.errorMessage!, retry: state.retry)),
                   if (!state.isLoading &&
                       state.errorMessage == null &&
                       visibleMeals.isEmpty)
                     SliverToBoxAdapter(
                       child: EmptyView(
-                        message: showingSaved
-                            ? 'Your favorite recipes will appear here'
-                            : 'No recipes found',
-                      ),
+                          message: showingSaved
+                              ? 'Belum ada resep tersimpan'
+                              : 'Tidak ada menu'),
                     ),
                   if (!state.isLoading &&
                       state.errorMessage == null &&
@@ -114,18 +110,16 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 96)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 104)),
                 ],
               ),
             ),
             Positioned(
-              left: 0,
-              right: 0,
-              bottom: 8,
-              child: !showingSaved
-                  ? BottomDock(controller: searchController, state: state)
-                  : const SizedBox.shrink(),
-            ),
+                left: 0,
+                right: 0,
+                bottom: 8,
+                child: BottomDock(controller: searchController, state: state)),
+            const FavoriteToastOverlay(),
           ],
         ),
       ),

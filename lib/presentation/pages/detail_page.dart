@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/meal.dart';
 import '../../data/repositories/meal_repository.dart';
+import '../../data/services/meal_api_service.dart';
+import '../widgets/app_network_image.dart';
 import '../widgets/meal_card.dart';
+import '../widgets/recipe_detail_sheet.dart';
 import '../widgets/status_views.dart';
 
 class DetailPage extends StatefulWidget {
@@ -39,10 +42,12 @@ class _DetailPageState extends State<DetailPage> {
         detail = loaded;
         loading = false;
       });
-    } catch (_) {
+    } catch (error) {
       if (!mounted) return;
       setState(() {
-        error = 'Could not load recipe details. Check your connection.';
+        this.error = error is MealApiException
+            ? error.message
+            : 'Could not load recipe details. Please retry.';
         loading = false;
       });
     }
@@ -61,10 +66,9 @@ class _DetailPageState extends State<DetailPage> {
               onPressed: () => Navigator.pop(context),
               icon: const Icon(CupertinoIcons.chevron_back)),
           flexibleSpace: FlexibleSpaceBar(
-            background: Image.network(
-              widget.meal.thumb,
+            background: AppNetworkImage(
+              imageUrl: widget.meal.mediumThumbnail,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const ColoredBox(color: surface2),
             ),
           ),
         ),
@@ -105,30 +109,14 @@ class _DetailPageState extends State<DetailPage> {
       ]),
       const SizedBox(height: 28),
       const Text('Ingredients',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+          style: TextStyle(fontSize: 23, fontWeight: FontWeight.w800)),
       const SizedBox(height: 12),
-      ...recipe.ingredients.map((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 9),
-            child: Row(children: [
-              Container(
-                  width: 7,
-                  height: 7,
-                  decoration:
-                      const BoxDecoration(color: mint, shape: BoxShape.circle)),
-              const SizedBox(width: 12),
-              Expanded(child: Text(item.name)),
-              Text(item.measure, style: const TextStyle(color: muted)),
-            ]),
-          )),
+      IngredientList(ingredients: recipe.ingredients),
       const SizedBox(height: 24),
       const Text('Instructions',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+          style: TextStyle(fontSize: 23, fontWeight: FontWeight.w800)),
       const SizedBox(height: 12),
-      Text(
-          recipe.instructions?.trim().isNotEmpty == true
-              ? recipe.instructions!
-              : 'No instructions available.',
-          style: const TextStyle(color: muted, height: 1.6)),
+      InstructionList(text: recipe.instructions),
     ]);
   }
 }

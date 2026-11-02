@@ -43,8 +43,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Could not load recipe details. Check your connection.'),
-        findsOneWidget);
+    expect(find.text('offline'), findsOneWidget);
     await tester.tap(find.text('Retry'));
     await tester.pumpAndSettle();
     expect(repository.detailCalls, 2);

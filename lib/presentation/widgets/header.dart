@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
@@ -6,192 +5,215 @@ import '../../core/theme/app_theme.dart';
 class Header extends StatelessWidget {
   final int selectedTab;
   final ValueChanged<int> onTabChanged;
+  final bool hasNotification;
+  final VoidCallback? onNotificationRead;
 
   const Header({
     super.key,
     required this.selectedTab,
     required this.onTabChanged,
+    this.hasNotification = false,
+    this.onNotificationRead,
   });
 
-  void _openNavigation(BuildContext context) {
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _SegmentedNav(
+              key: const Key('top-left-network-nav'),
+              selectedTab: selectedTab,
+              onChanged: onTabChanged,
+            ),
+            _ActionPill(
+              hasNotification: hasNotification,
+              onNotification: () => _showNotifications(context),
+              onMore: () => _showMore(context),
+            ),
+          ],
+        ),
+      );
+
+  void _showNotifications(BuildContext context) {
+    onNotificationRead?.call();
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
       builder: (context) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Container(
-              width: 42,
-              height: 4,
-              decoration: BoxDecoration(
-                color: surface2,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Navigate',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
-              ),
-            ),
+            const _SheetHandle(),
+            const SizedBox(height: 22),
+            const Row(children: [
+              Icon(Icons.notifications_none_rounded, color: mint),
+              SizedBox(width: 10),
+              Text('Notifications',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800))
+            ]),
+            const SizedBox(height: 26),
+            const Icon(Icons.notifications_off_outlined,
+                size: 38, color: muted),
             const SizedBox(height: 12),
-            _NavigationChoice(
-              icon: CupertinoIcons.house_fill,
-              label: 'Home',
-              selected: selectedTab == 0,
-              onTap: () {
-                Navigator.pop(context);
-                onTabChanged(0);
-              },
-            ),
-            const SizedBox(height: 8),
-            _NavigationChoice(
-              icon: CupertinoIcons.heart_fill,
-              label: 'Saved recipes',
-              selected: selectedTab == 1,
-              onTap: () {
-                Navigator.pop(context);
-                onTabChanged(1);
-              },
-            ),
+            const Text("You're all caught up",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 6),
+            const Text('Favorite updates will show up here.',
+                textAlign: TextAlign.center, style: TextStyle(color: muted)),
           ]),
         ),
       ),
     );
   }
 
+  void _showMore(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: surface,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+      builder: (_) => const SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 18, 24, 30),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            _SheetHandle(),
+            SizedBox(height: 20),
+            Text('Pantom Meals',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+            SizedBox(height: 8),
+            Text('Recipe catalog powered by TheMealDB',
+                style: TextStyle(color: muted)),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _SegmentedNav extends StatelessWidget {
+  final int selectedTab;
+  final ValueChanged<int> onChanged;
+  const _SegmentedNav({
+    super.key,
+    required this.selectedTab,
+    required this.onChanged,
+  });
+
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
-        child: Row(children: [
-          GestureDetector(
-            onTap: () => _openNavigation(context),
+  Widget build(BuildContext context) => Container(
+        width: 176,
+        height: 56,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+            color: surface2, borderRadius: BorderRadius.circular(30)),
+        child: Stack(children: [
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 240),
+            curve: Curves.easeOutCubic,
+            alignment:
+                selectedTab == 0 ? Alignment.centerLeft : Alignment.centerRight,
             child: Container(
-              key: const Key('top-left-network-nav'),
-              width: 58,
-              height: 46,
-              decoration: BoxDecoration(
-                color: surface2,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: const _NetworkIcon(),
-            ),
+                width: 84,
+                height: 48,
+                decoration: BoxDecoration(
+                    color: mint, borderRadius: BorderRadius.circular(26))),
           ),
-          const SizedBox(width: 12),
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: mint,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: const Icon(CupertinoIcons.book_fill, color: bg, size: 21),
-          ),
-          const SizedBox(width: 12),
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Pantom',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
-              Text('MEALS',
-                  style: TextStyle(
-                      color: mint,
-                      fontSize: 11,
-                      letterSpacing: 2.4,
-                      fontWeight: FontWeight.bold)),
-            ],
-          ),
+          Row(children: [
+            _Segment(
+                key: const Key('top-nav-home'),
+                icon: selectedTab == 0
+                    ? Icons.restaurant_menu_rounded
+                    : Icons.restaurant_menu_outlined,
+                selected: selectedTab == 0,
+                onTap: () => onChanged(0)),
+            _Segment(
+                key: const Key('top-nav-saved'),
+                icon: selectedTab == 1
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+                selected: selectedTab == 1,
+                onTap: () => onChanged(1)),
+          ]),
         ]),
       );
 }
 
-class _NavigationChoice extends StatelessWidget {
+class _Segment extends StatelessWidget {
   final IconData icon;
-  final String label;
   final bool selected;
   final VoidCallback onTap;
-
-  const _NavigationChoice({
-    required this.icon,
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
+  const _Segment(
+      {super.key,
+      required this.icon,
+      required this.selected,
+      required this.onTap});
 
   @override
-  Widget build(BuildContext context) => Material(
-        color: selected ? mint : surface2,
-        borderRadius: BorderRadius.circular(18),
+  Widget build(BuildContext context) => Expanded(
         child: InkWell(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(26),
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(children: [
-              Icon(icon, color: selected ? bg : muted),
-              const SizedBox(width: 12),
-              Text(
-                label,
-                style: TextStyle(
-                  color: selected ? bg : Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ]),
-          ),
+          child:
+              Center(child: Icon(icon, size: 24, color: selected ? bg : muted)),
         ),
       );
 }
 
-class _NetworkIcon extends StatelessWidget {
-  const _NetworkIcon();
+class _ActionPill extends StatelessWidget {
+  final bool hasNotification;
+  final VoidCallback onNotification;
+  final VoidCallback onMore;
+  const _ActionPill(
+      {required this.hasNotification,
+      required this.onNotification,
+      required this.onMore});
 
   @override
-  Widget build(BuildContext context) => Stack(
-        alignment: Alignment.center,
-        children: [
-          const Positioned(
-            left: 9,
-            child: Icon(
-              CupertinoIcons.chat_bubble_2_fill,
-              size: 21,
-              color: Colors.white,
-            ),
-          ),
-          CustomPaint(size: const Size(28, 28), painter: _NetworkPainter()),
-        ],
+  Widget build(BuildContext context) => Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+            color: surface2, borderRadius: BorderRadius.circular(30)),
+        child: Row(children: [
+          Stack(children: [
+            IconButton(
+                key: const Key('top-notification-button'),
+                tooltip: 'Notifications',
+                onPressed: onNotification,
+                icon: const Icon(Icons.notifications_none_rounded, size: 24),
+                color: Colors.white,
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48)),
+            if (hasNotification)
+              Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                          color: mint, shape: BoxShape.circle))),
+          ]),
+          IconButton(
+              key: const Key('top-more-button'),
+              tooltip: 'More',
+              onPressed: onMore,
+              icon: const Icon(Icons.more_horiz_rounded, size: 24),
+              color: muted,
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48)),
+        ]),
       );
 }
 
-class _NetworkPainter extends CustomPainter {
+class _SheetHandle extends StatelessWidget {
+  const _SheetHandle();
   @override
-  void paint(Canvas canvas, Size size) {
-    final line = Paint()
-      ..color = Colors.white.withOpacity(.92)
-      ..strokeWidth = 1.6
-      ..style = PaintingStyle.stroke;
-    final dot = Paint()..color = Colors.white;
-    final points = <Offset>[
-      Offset(size.width * .48, size.height * .18),
-      Offset(size.width * .80, size.height * .36),
-      Offset(size.width * .70, size.height * .78),
-      Offset(size.width * .36, size.height * .80),
-      Offset(size.width * .22, size.height * .48),
-    ];
-    for (var index = 0; index < points.length; index++) {
-      canvas.drawLine(points[index], points[(index + 1) % points.length], line);
-    }
-    for (final point in points) {
-      canvas.drawCircle(point, 2.4, dot);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  Widget build(BuildContext context) => Container(
+      width: 42,
+      height: 4,
+      decoration: BoxDecoration(
+          color: surface2, borderRadius: BorderRadius.circular(4)));
 }

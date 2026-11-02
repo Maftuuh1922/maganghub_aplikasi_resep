@@ -18,6 +18,7 @@ class FloatingNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Align(
+        alignment: Alignment.centerLeft,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 320),
           child: GestureDetector(

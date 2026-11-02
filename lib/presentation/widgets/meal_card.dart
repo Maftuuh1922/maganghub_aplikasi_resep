@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/meal.dart';
 import '../../logic/app_state.dart';
-import '../pages/detail_page.dart';
+import 'app_network_image.dart';
+import 'recipe_detail_sheet.dart';
 
 class MealCard extends StatelessWidget {
   final Meal meal;
@@ -15,11 +16,10 @@ class MealCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => DetailPage(meal: meal, repository: state.repository),
-        ),
+      onTap: () => showRecipeDetailSheet(
+        context: context,
+        meal: meal,
+        repository: state.repository,
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -27,15 +27,12 @@ class MealCard extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(
             child: Stack(children: [
-              ClipRRect(
+              AppNetworkImage(
+                imageUrl: meal.smallThumbnail,
+                width: double.infinity,
+                height: double.infinity,
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(24)),
-                child: Image.network(meal.thumb,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        const ColoredBox(color: surface2)),
               ),
               Positioned(
                 top: 10,

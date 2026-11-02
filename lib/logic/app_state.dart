@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/models/category.dart';
 import '../data/models/meal.dart';
 import '../data/repositories/meal_repository.dart';
+import '../data/services/meal_api_service.dart';
 
 class AppState extends ChangeNotifier {
   final MealRepository repository;
@@ -23,6 +25,9 @@ class AppState extends ChangeNotifier {
   bool isLoading = true;
   bool categoriesLoaded = false;
   String? errorMessage;
+  ToastNotice? toast;
+  bool hasNewFavoriteNotification = false;
+  int _toastId = 0;
 
   Future<void> _initialize() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,13 +62,10 @@ class AppState extends ChangeNotifier {
     try {
       categories = await repository.getCategories();
       categoriesLoaded = true;
-      if (categories.isNotEmpty &&
-          !categories.any((item) => item.name == selectedCategory)) {
-        selectedCategory = categories.first.name;
-      }
+      if (categories.isNotEmpty) selectedCategory = categories.first.name;
       await loadMeals();
-    } catch (_) {
-      _setError('Unable to connect. Check your internet and try again.');
+    } catch (error) {
+      _setError(_readableError(error, 'Could not load recipe categories.'));
     }
   }
 
@@ -72,8 +74,8 @@ class AppState extends ChangeNotifier {
     try {
       meals = await repository.getMeals(selectedCategory, query: searchQuery);
       _setReady();
-    } catch (_) {
-      _setError('Something went wrong while loading recipes.');
+    } catch (error) {
+      _setError(_readableError(error, 'Could not load recipes.'));
     }
   }
 
@@ -93,19 +95,32 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> _searchLater(String value) async {
-    await Future.delayed(const Duration(milliseconds: 450));
+    await Future<void>.delayed(const Duration(milliseconds: 450));
     if (value == searchQuery) await loadMeals();
   }
 
   Future<void> toggleFavorite(Meal meal) async {
-    if (favoriteIds.contains(meal.id)) {
-      favoriteIds.remove(meal.id);
-      favoriteMeals.remove(meal.id);
-    } else {
+    final added = !favoriteIds.contains(meal.id);
+    if (added) {
       favoriteIds.add(meal.id);
       favoriteMeals[meal.id] = meal;
+    } else {
+      favoriteIds.remove(meal.id);
+      favoriteMeals.remove(meal.id);
     }
+
+    final notice = ToastNotice(
+      id: ++_toastId,
+      added: added,
+      message: added
+          ? '${meal.name} ditambahkan ke Saved'
+          : '${meal.name} dihapus dari Saved',
+    );
+    toast = notice;
+    hasNewFavoriteNotification = true;
     notifyListeners();
+    unawaited(_hideToastAfter(notice));
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('favorites', favoriteIds.toList());
     await prefs.setStringList(
@@ -115,6 +130,19 @@ class AppState extends ChangeNotifier {
   }
 
   bool isFavorite(String id) => favoriteIds.contains(id);
+
+  void markNotificationsRead() {
+    if (!hasNewFavoriteNotification) return;
+    hasNewFavoriteNotification = false;
+    notifyListeners();
+  }
+
+  Future<void> _hideToastAfter(ToastNotice notice) async {
+    await Future<void>.delayed(const Duration(milliseconds: 2600));
+    if (toast?.id != notice.id) return;
+    toast = null;
+    notifyListeners();
+  }
 
   Future<void> retry() => categoriesLoaded ? loadMeals() : loadCategories();
 
@@ -138,4 +166,21 @@ class AppState extends ChangeNotifier {
     errorMessage = message;
     notifyListeners();
   }
+
+  String _readableError(Object error, String fallback) {
+    if (error is MealApiException) return error.message;
+    return fallback;
+  }
+}
+
+class ToastNotice {
+  final int id;
+  final bool added;
+  final String message;
+
+  const ToastNotice({
+    required this.id,
+    required this.added,
+    required this.message,
+  });
 }

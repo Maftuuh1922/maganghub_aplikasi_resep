@@ -38,8 +38,7 @@ void main() {
     await state.initialized;
 
     expect(repository.categoryCalls, 1);
-    expect(state.errorMessage,
-        'Unable to connect. Check your internet and try again.');
+    expect(state.errorMessage, 'offline');
 
     await state.retry();
 

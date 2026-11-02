@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/category.dart';
 import '../../logic/app_state.dart';
+import 'app_network_image.dart';
 
 class SearchHeader extends StatelessWidget {
   final TextEditingController controller;
@@ -49,13 +50,13 @@ class SectionHeader extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
         child: Row(children: [
           Text(
-              favorites
-                  ? 'Favorite recipes'
-                  : (state.searchQuery.isNotEmpty
-                      ? 'Search results'
-                      : '${state.selectedCategory} recipes'),
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+            favorites
+                ? 'Favorite recipes'
+                : (state.searchQuery.isNotEmpty
+                    ? 'Search results'
+                    : '${state.selectedCategory} recipes'),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+          ),
           const Spacer(),
           if (!state.isLoading)
             Text(
@@ -83,9 +84,10 @@ class CategoryStrip extends StatelessWidget {
               final category = state.categories[index];
               final active = category.name == state.selectedCategory;
               return _CategoryTile(
-                  category: category,
-                  active: active,
-                  onTap: () => state.selectCategory(category.name));
+                category: category,
+                active: active,
+                onTap: () => state.selectCategory(category.name),
+              );
             },
           ),
         ),
@@ -100,39 +102,33 @@ class _CategoryTile extends StatelessWidget {
       {required this.category, required this.active, required this.onTap});
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 92,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-              color: active ? mint : surface,
-              borderRadius: BorderRadius.circular(20)),
-          child: Column(children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Image.network(
-                category.image,
+  Widget build(BuildContext context) => Tooltip(
+        message:
+            category.description.isEmpty ? category.name : category.description,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 92,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: active ? mint : surface,
+                borderRadius: BorderRadius.circular(20)),
+            child: Column(children: [
+              AppNetworkImage(
+                imageUrl: category.image,
                 width: 50,
                 height: 50,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const ColoredBox(
-                  color: surface2,
-                  child: SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: Icon(CupertinoIcons.photo, color: muted)),
-                ),
+                borderRadius: BorderRadius.circular(14),
               ),
-            ),
-            const SizedBox(height: 5),
-            Text(category.name,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: active ? bg : Colors.white)),
-          ]),
+              const SizedBox(height: 5),
+              Text(category.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: active ? bg : Colors.white)),
+            ]),
+          ),
         ),
       );
 }

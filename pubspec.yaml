@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  cached_network_image: ^3.4.1
   http: ^1.2.2
   provider: ^6.1.2
   shared_preferences: ^2.3.2
@@ -30,3 +31,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/onboarding/
+  fonts:
+    - family: PantomReading
+      fonts:
+        - asset: assets/fonts/PantomReading-Regular.ttf

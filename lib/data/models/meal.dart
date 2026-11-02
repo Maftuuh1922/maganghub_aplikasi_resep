@@ -37,6 +37,23 @@ class Meal {
     );
   }
 
+  String get smallThumbnail => _thumbnailSize('small');
+  String get mediumThumbnail => _thumbnailSize('medium');
+
+  String _thumbnailSize(String size) {
+    final trimmed = thumb.trim();
+    if (trimmed.isEmpty) return '';
+    final uri = Uri.tryParse(trimmed);
+    if (uri == null || !uri.hasScheme) return trimmed;
+    if (uri.pathSegments.isNotEmpty && uri.pathSegments.last == size) {
+      return trimmed;
+    }
+    return uri.replace(path: '${uri.path}/$size').toString();
+  }
+
+  String ingredientImage(String name) =>
+      'https://www.themealdb.com/images/ingredients/${Uri.encodeComponent(name)}.png';
+
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
       'idMeal': id,
