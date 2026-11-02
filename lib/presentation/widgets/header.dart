@@ -48,22 +48,21 @@ class Header extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.fromLTRB(24, 16, 24, 28),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            const _SheetHandle(),
-            const SizedBox(height: 22),
-            const Row(children: [
+            _SheetHandle(),
+            SizedBox(height: 22),
+            Row(children: [
               Icon(Icons.notifications_none_rounded, color: mint),
               SizedBox(width: 10),
               Text('Notifications',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800))
             ]),
-            const SizedBox(height: 26),
-            const Icon(Icons.notifications_off_outlined,
-                size: 38, color: muted),
-            const SizedBox(height: 12),
-            const Text("You're all caught up",
+            SizedBox(height: 26),
+            Icon(Icons.notifications_off_outlined, size: 38, color: muted),
+            SizedBox(height: 12),
+            Text("You're all caught up",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 6),
-            const Text('Favorite updates will show up here.',
+            SizedBox(height: 6),
+            Text('Favorite updates will show up here.',
                 textAlign: TextAlign.center, style: TextStyle(color: muted)),
           ]),
         ),
