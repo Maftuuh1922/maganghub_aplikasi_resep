@@ -46,7 +46,7 @@ class Header extends StatelessWidget {
       ),
       builder: (context) => const SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
+          padding: EdgeInsets.fromLTRB(24, 16, 24, 28),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             const _SheetHandle(),
             const SizedBox(height: 22),
