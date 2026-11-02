@@ -120,4 +120,21 @@ void main() {
     // This smoke test is kept on the catalog integration branch for the dock.
     expect(find.byType(FloatingNav), findsOneWidget);
   });
+
+  testWidgets('top-left network button opens navigation choices',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: Header(
+          selectedTab: 0,
+          onTabChanged: (_) {},
+        ),
+      ),
+    ));
+    expect(find.byKey(const Key('top-left-network-nav')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('top-left-network-nav')));
+    await tester.pumpAndSettle();
+    expect(find.text('Navigate'), findsOneWidget);
+    expect(find.text('Saved recipes'), findsOneWidget);
+  });
 }
