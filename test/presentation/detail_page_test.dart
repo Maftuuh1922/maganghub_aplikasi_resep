@@ -34,7 +34,7 @@ void main() {
 
   testWidgets('detail error exposes a working retry action', (tester) async {
     final repository = _RetryRepository();
-    final meal = const Meal(id: '42', name: 'Retry Soup', thumb: '');
+    const meal = Meal(id: '42', name: 'Retry Soup', thumb: '');
     await tester.pumpWidget(
       ChangeNotifierProvider(
         create: (_) => AppState(repository),

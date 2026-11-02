@@ -21,8 +21,9 @@ class _OnboardingGateState extends State<OnboardingGate> {
 
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
-    if (mounted)
+    if (mounted) {
       setState(() => completed = prefs.getBool('onboarding_complete') ?? false);
+    }
   }
 
   @override
