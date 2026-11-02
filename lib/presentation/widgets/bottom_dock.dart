@@ -22,7 +22,7 @@ class BottomDock extends StatelessWidget {
           key: const Key('bottom-search-field'),
           controller: controller,
           onChanged: state.updateSearch,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Cari resep...',
             prefixIcon: const Icon(CupertinoIcons.search),
             prefixIconConstraints: const BoxConstraints(

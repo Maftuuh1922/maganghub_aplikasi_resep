@@ -134,7 +134,7 @@ void main() {
     ];
 
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
             child: IngredientList(ingredients: ingredients),
