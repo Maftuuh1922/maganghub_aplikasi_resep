@@ -31,8 +31,9 @@ class SearchHeader extends StatelessWidget {
               filled: true,
               fillColor: surface,
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
         ]),
@@ -60,8 +61,9 @@ class SectionHeader extends StatelessWidget {
           const Spacer(),
           if (!state.isLoading)
             Text(
-                '${favorites ? state.savedMeals.length : state.meals.length} meals',
-                style: const TextStyle(color: muted, fontSize: 13)),
+              '${favorites ? state.savedMeals.length : state.meals.length} meals',
+              style: const TextStyle(color: muted, fontSize: 13),
+            ),
         ]),
       );
 }
@@ -72,9 +74,9 @@ class CategoryStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.only(bottom: 12),
         child: SizedBox(
-          height: 104,
+          height: 90,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             scrollDirection: Axis.horizontal,
@@ -82,10 +84,9 @@ class CategoryStrip extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (_, index) {
               final category = state.categories[index];
-              final active = category.name == state.selectedCategory;
               return _CategoryTile(
                 category: category,
-                active: active,
+                active: category.name == state.selectedCategory,
                 onTap: () => state.selectCategory(category.name),
               );
             },
@@ -98,36 +99,55 @@ class _CategoryTile extends StatelessWidget {
   final MealCategory category;
   final bool active;
   final VoidCallback onTap;
-  const _CategoryTile(
-      {required this.category, required this.active, required this.onTap});
+
+  const _CategoryTile({
+    required this.category,
+    required this.active,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) => Tooltip(
         message:
             category.description.isEmpty ? category.name : category.description,
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: 92,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
+        child: SizedBox(
+          key: Key('category-gesture-${category.name}'),
+          width: 78,
+          height: 78,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              key: Key('category-tile-${category.name}'),
+              width: 78,
+              height: 78,
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
                 color: active ? mint : surface,
-                borderRadius: BorderRadius.circular(20)),
-            child: Column(children: [
-              AppNetworkImage(
-                imageUrl: category.image,
-                width: 50,
-                height: 50,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(height: 5),
-              Text(category.name,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      fontSize: 11,
+              child: Column(
+                children: [
+                  AppNetworkImage(
+                    key: Key('category-image-${category.name}'),
+                    imageUrl: category.image,
+                    width: 48,
+                    height: 42,
+                    fit: BoxFit.contain,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    category.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: active ? bg : Colors.white)),
-            ]),
+                      color: active ? bg : Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       );

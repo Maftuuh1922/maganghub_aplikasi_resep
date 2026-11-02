@@ -53,9 +53,11 @@ class _FavoriteToastState extends State<FavoriteToast>
                     color: surface.withOpacity(.98),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
-                      color: widget.notice.added
-                          ? mint.withOpacity(.45)
-                          : muted.withOpacity(.45),
+                      color: widget.notice.isError
+                          ? Colors.redAccent.withOpacity(.35)
+                          : (widget.notice.added
+                              ? mint.withOpacity(.45)
+                              : muted.withOpacity(.45)),
                     ),
                     boxShadow: const [
                       BoxShadow(
@@ -78,7 +80,9 @@ class _FavoriteToastState extends State<FavoriteToast>
                             ? CupertinoIcons.heart_fill
                             : CupertinoIcons.heart,
                         size: 17,
-                        color: widget.notice.added ? bg : muted,
+                        color: widget.notice.isError
+                            ? Colors.redAccent
+                            : (widget.notice.added ? bg : muted),
                       ),
                     ),
                     const SizedBox(width: 10),

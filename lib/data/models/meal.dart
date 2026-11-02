@@ -39,7 +39,7 @@ class Meal {
 
   String get smallThumbnail => _thumbnailSize('small');
   String get mediumThumbnail => _thumbnailSize('medium');
-  String get largeThumbnail => _thumbnailSize('large');
+  String get originalThumbnail => thumb.trim();
 
   String _thumbnailSize(String size) {
     final trimmed = thumb.trim();

@@ -25,7 +25,8 @@ class MealCard extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           AppNetworkImage(
-            imageUrl: meal.smallThumbnail,
+            key: Key('meal-image-${meal.id}'),
+            imageUrl: meal.mediumThumbnail,
             width: double.infinity,
             height: double.infinity,
             borderRadius: BorderRadius.circular(24),

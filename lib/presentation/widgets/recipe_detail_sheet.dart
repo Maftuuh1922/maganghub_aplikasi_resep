@@ -122,7 +122,8 @@ class _SheetTop extends StatelessWidget {
               top: Radius.circular(32),
             ),
             child: AppNetworkImage(
-              imageUrl: meal.largeThumbnail,
+              key: const Key('detail-cover-image'),
+              imageUrl: meal.originalThumbnail,
               width: double.infinity,
               height: 292,
             ),
@@ -145,7 +146,8 @@ class _SheetTop extends StatelessWidget {
           Positioned(
             top: 20,
             right: 20,
-            child: DecoratedBox(
+            child: Container(
+              key: const Key('sheet-favorite-control'),
               decoration: BoxDecoration(
                 color: bg.withOpacity(.78),
                 borderRadius: BorderRadius.circular(18),
@@ -165,36 +167,42 @@ class _SheetTop extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            child: Container(
-              color: bg.withOpacity(.90),
-              padding: const EdgeInsets.fromLTRB(22, 14, 22, 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    meal.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
+            child: ClipRRect(
+              key: const Key('detail-title-backdrop'),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(22),
+              ),
+              child: Container(
+                color: bg.withOpacity(.90),
+                padding: const EdgeInsets.fromLTRB(22, 14, 22, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      meal.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                  ),
-                  if (meal.category?.trim().isNotEmpty == true ||
-                      meal.area?.trim().isNotEmpty == true) ...[
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        if (meal.category?.trim().isNotEmpty == true)
-                          _SheetTag(text: meal.category!),
-                        if (meal.area?.trim().isNotEmpty == true)
-                          _SheetTag(text: meal.area!),
-                      ],
-                    ),
+                    if (meal.category?.trim().isNotEmpty == true ||
+                        meal.area?.trim().isNotEmpty == true) ...[
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          if (meal.category?.trim().isNotEmpty == true)
+                            _SheetTag(text: meal.category!),
+                          if (meal.area?.trim().isNotEmpty == true)
+                            _SheetTag(text: meal.area!),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -335,7 +343,8 @@ class IngredientList extends StatelessWidget {
       return const Text('Bahan tidak tersedia.',
           style: TextStyle(color: muted));
     }
-    return DecoratedBox(
+    return Container(
+      key: const Key('ingredients-card'),
       decoration: BoxDecoration(
         color: readingSurface.withOpacity(.55),
         borderRadius: BorderRadius.circular(18),

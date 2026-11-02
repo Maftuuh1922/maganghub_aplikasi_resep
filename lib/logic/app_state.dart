@@ -11,8 +11,14 @@ import '../data/services/meal_api_service.dart';
 
 class AppState extends ChangeNotifier {
   final MealRepository repository;
+  final Future<SharedPreferences> Function() _preferencesProvider;
   late final Future<void> initialized;
-  AppState(this.repository) {
+
+  AppState(
+    this.repository, {
+    Future<SharedPreferences> Function()? preferencesProvider,
+  }) : _preferencesProvider =
+            preferencesProvider ?? SharedPreferences.getInstance {
     initialized = _initialize();
   }
 
@@ -28,17 +34,26 @@ class AppState extends ChangeNotifier {
   ToastNotice? toast;
   bool hasNewFavoriteNotification = false;
   int _toastId = 0;
+  int _favoriteMutationId = 0;
 
   Future<void> _initialize() async {
-    final prefs = await SharedPreferences.getInstance();
-    favoriteIds = (prefs.getStringList('favorites') ?? []).toSet();
-    for (final encoded in prefs.getStringList('favorite_meals') ?? <String>[]) {
-      try {
-        final meal = Meal.fromJson(jsonDecode(encoded) as Map<String, dynamic>);
-        favoriteMeals[meal.id] = meal;
-      } catch (_) {
-        // Ignore corrupt cache entries and continue with valid favorites.
+    try {
+      final prefs = await _preferencesProvider();
+      favoriteIds = (prefs.getStringList('favorites') ?? []).toSet();
+      for (final encoded
+          in prefs.getStringList('favorite_meals') ?? <String>[]) {
+        try {
+          final meal =
+              Meal.fromJson(jsonDecode(encoded) as Map<String, dynamic>);
+          favoriteMeals[meal.id] = meal;
+        } catch (_) {
+          // Ignore corrupt cache entries and continue with valid favorites.
+        }
       }
+    } catch (_) {
+      // Local-storage failure must not block the catalog UI.
+      favoriteIds = {};
+      favoriteMeals.clear();
     }
     await _hydrateFavorites();
     await loadCategories();
@@ -101,6 +116,8 @@ class AppState extends ChangeNotifier {
 
   Future<void> toggleFavorite(Meal meal) async {
     final added = !favoriteIds.contains(meal.id);
+    final previousMeal = favoriteMeals[meal.id];
+    final mutationId = ++_favoriteMutationId;
     if (added) {
       favoriteIds.add(meal.id);
       favoriteMeals[meal.id] = meal;
@@ -121,12 +138,31 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     unawaited(_hideToastAfter(notice));
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('favorites', favoriteIds.toList());
-    await prefs.setStringList(
-      'favorite_meals',
-      favoriteMeals.values.map((item) => jsonEncode(item.toJson())).toList(),
-    );
+    try {
+      final prefs = await _preferencesProvider();
+      await prefs.setStringList('favorites', favoriteIds.toList());
+      await prefs.setStringList(
+        'favorite_meals',
+        favoriteMeals.values.map((item) => jsonEncode(item.toJson())).toList(),
+      );
+    } catch (_) {
+      if (_favoriteMutationId == mutationId) {
+        if (added) {
+          favoriteIds.remove(meal.id);
+          favoriteMeals.remove(meal.id);
+        } else {
+          favoriteIds.add(meal.id);
+          if (previousMeal != null) favoriteMeals[meal.id] = previousMeal;
+        }
+        toast = ToastNotice(
+          id: ++_toastId,
+          added: false,
+          isError: true,
+          message: 'Gagal menyimpan favorit. Coba lagi.',
+        );
+        notifyListeners();
+      }
+    }
   }
 
   bool isFavorite(String id) => favoriteIds.contains(id);
@@ -176,11 +212,13 @@ class AppState extends ChangeNotifier {
 class ToastNotice {
   final int id;
   final bool added;
+  final bool isError;
   final String message;
 
   const ToastNotice({
     required this.id,
     required this.added,
+    this.isError = false,
     required this.message,
   });
 }

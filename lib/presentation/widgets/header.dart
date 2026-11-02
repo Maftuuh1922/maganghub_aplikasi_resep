@@ -19,64 +19,162 @@ class Header extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-        color: bg.withOpacity(.97),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _SegmentedNav(
-                key: const Key('top-left-network-nav'),
-                pageOffset: selectedTab?.toDouble() ?? pageOffset,
-                onChanged: onTabChanged,
-              ),
-              _ActionPill(
-                hasNotification: hasNotification,
-                onNotification: () => _showNotifications(context),
-                onMore: () => _showMore(context),
-              ),
-            ],
-          ),
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _SegmentedNav(
+              key: const Key('top-left-network-nav'),
+              pageOffset: selectedTab?.toDouble() ?? pageOffset,
+              onChanged: onTabChanged,
+            ),
+            _ActionPill(
+              hasNotification: hasNotification,
+              onNotification: () => _showNotifications(context),
+              onMore: () => _showMore(context),
+            ),
+          ],
         ),
       );
 
   void _showNotifications(BuildContext context) {
     onNotificationRead?.call();
+    final notifications = <_DemoNotification>[
+      const _DemoNotification(
+        title: 'Resep baru untuk dicoba',
+        message: 'Spicy Arrabiata Penne siap menemani hari ini.',
+        icon: Icons.restaurant_rounded,
+      ),
+      const _DemoNotification(
+        title: 'Inspirasi hari ini',
+        message: 'Jelajahi kategori dan temukan menu favoritmu.',
+        icon: Icons.lightbulb_outline_rounded,
+      ),
+    ];
+
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: surface,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (context) => const SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 16, 24, 28),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            _SheetHandle(),
-            SizedBox(height: 22),
-            Row(children: [
-              Icon(Icons.notifications_none_rounded, color: mint),
-              SizedBox(width: 10),
-              Text(
-                'Notifications',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
-              ),
-            ]),
-            SizedBox(height: 26),
-            Icon(Icons.notifications_off_outlined, size: 38, color: muted),
-            SizedBox(height: 12),
-            Text(
-              "You're all caught up",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const _SheetHandle(),
+                const SizedBox(height: 18),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Notifications',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    if (notifications.isNotEmpty)
+                      TextButton.icon(
+                        key: const Key('notification-clear-all'),
+                        onPressed: () => setModalState(notifications.clear),
+                        icon: const Icon(Icons.delete_sweep_outlined, size: 19),
+                        label: const Text('Hapus semua'),
+                        style: TextButton.styleFrom(foregroundColor: muted),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                if (notifications.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 28),
+                    child: Column(
+                      children: [
+                        Icon(Icons.notifications_off_outlined,
+                            size: 38, color: muted),
+                        SizedBox(height: 10),
+                        Text(
+                          'Semua notifikasi sudah dibersihkan',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: muted),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  ...List.generate(notifications.length, (index) {
+                    final item = notifications[index];
+                    return Container(
+                      key: Key('notification-card-$index'),
+                      margin: const EdgeInsets.only(bottom: 9),
+                      padding: const EdgeInsets.fromLTRB(13, 11, 5, 11),
+                      decoration: BoxDecoration(
+                        color: surface2.withOpacity(.62),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 38,
+                            height: 38,
+                            decoration: const BoxDecoration(
+                              color: mint,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(item.icon, color: bg, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  item.message,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: readingText,
+                                    fontSize: 12,
+                                    height: 1.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            key: Key('notification-delete-$index'),
+                            tooltip: 'Hapus notifikasi',
+                            onPressed: () => setModalState(
+                              () => notifications.removeAt(index),
+                            ),
+                            icon: const Icon(Icons.close_rounded, size: 19),
+                            color: muted,
+                            constraints: const BoxConstraints(
+                              minWidth: 44,
+                              minHeight: 44,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+              ],
             ),
-            SizedBox(height: 6),
-            Text(
-              'Favorite updates will show up here.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: muted),
-            ),
-          ]),
+          ),
         ),
       ),
     );
@@ -262,4 +360,16 @@ class _SheetHandle extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
         ),
       );
+}
+
+class _DemoNotification {
+  final String title;
+  final String message;
+  final IconData icon;
+
+  const _DemoNotification({
+    required this.title,
+    required this.message,
+    required this.icon,
+  });
 }

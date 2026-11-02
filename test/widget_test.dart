@@ -93,8 +93,8 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('top-notification-button')));
     await tester.pumpAndSettle();
-    expect(find.text('Notifications'), findsOneWidget);
-    expect(find.text("You're all caught up"), findsOneWidget);
+    expect(find.text('Resep baru untuk dicoba'), findsOneWidget);
+    expect(find.text('Inspirasi hari ini'), findsOneWidget);
   });
 
   testWidgets('bottom search is rounded, translucent, and accessible',
@@ -189,5 +189,6 @@ void main() {
     expect(find.byKey(const Key('top-left-network-nav')), findsOneWidget);
     expect(find.byKey(const Key('top-nav-home')), findsOneWidget);
     expect(find.byKey(const Key('top-nav-saved')), findsOneWidget);
+    expect(find.byType(ColoredBox), findsNothing);
   });
 }
