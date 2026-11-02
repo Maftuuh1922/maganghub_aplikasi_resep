@@ -1,38 +1,27 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pantom_meals/main.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class _NavigationHarness extends StatefulWidget {
-  const _NavigationHarness();
+import 'package:pantom_meals/main.dart';
+import 'package:pantom_meals/presentation/widgets/favorite_toast.dart';
+
+class _UiRepository extends MealRepository {
+  _UiRepository() : super(MealApiService());
 
   @override
-  State<_NavigationHarness> createState() => _NavigationHarnessState();
-}
-
-class _NavigationHarnessState extends State<_NavigationHarness> {
-  int selected = 0;
+  Future<List<MealCategory>> getCategories() async => [];
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        home: Scaffold(
-          body: Center(child: Text('page $selected')),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.all(16),
-            child: FloatingNav(
-              selected: selected,
-              onChanged: (value) => setState(() => selected = value),
-            ),
-          ),
-        ),
-      );
+  Future<List<Meal>> getMeals(String category, {String? query}) async => [];
+
+  @override
+  Future<Meal> getMealDetail(String id) async =>
+      throw const MealApiException('not found');
 }
 
 void main() {
-  setUp(() {
-    SharedPreferences.setMockInitialValues({});
-  });
+  setUp(() => SharedPreferences.setMockInitialValues({}));
 
   testWidgets('first launch shows onboarding', (tester) async {
     await tester.pumpWidget(const PantomMealsApp());
@@ -52,22 +41,82 @@ void main() {
     );
   });
 
-  testWidgets('swiping the floating navigation selects the next page',
-      (tester) async {
-    await tester.pumpWidget(const _NavigationHarness());
-    final nav = find.byType(FloatingNav);
-    final bounds = tester.getRect(nav);
-    await tester.flingFrom(bounds.center, const Offset(-300, 0), 1500);
-    await tester.pumpAndSettle();
-    expect(find.text('page 1'), findsOneWidget);
-    expect(find.byIcon(CupertinoIcons.heart_fill), findsOneWidget);
+  testWidgets('segmented top pill switches to Saved', (tester) async {
+    var selected = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Header(
+            selectedTab: selected,
+            onTabChanged: (value) => selected = value,
+          ),
+        ),
+      ),
+    );
+    expect(find.byKey(const Key('top-nav-home')), findsOneWidget);
+    expect(find.byKey(const Key('top-nav-saved')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('top-nav-saved')));
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(selected, 1);
   });
 
-  testWidgets('notification control opens its panel', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Header())));
-    await tester.tap(find.byIcon(CupertinoIcons.bell));
+  testWidgets('top action pill opens notifications', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Header(selectedTab: 0, onTabChanged: (_) {}),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const Key('top-notification-button')));
     await tester.pumpAndSettle();
     expect(find.text('Notifications'), findsOneWidget);
     expect(find.text("You're all caught up"), findsOneWidget);
+  });
+
+  testWidgets('bottom dock exposes search only', (tester) async {
+    final state = AppState(_UiRepository());
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: BottomDock(
+            controller: TextEditingController(),
+            state: state,
+          ),
+        ),
+      ),
+    );
+    expect(find.byKey(const Key('bottom-search-field')), findsOneWidget);
+    expect(find.byKey(const Key('bottom-notification-button')), findsNothing);
+  });
+
+  testWidgets('favorite action shows a replaceable toast', (tester) async {
+    final state = AppState(_UiRepository());
+    const meal = Meal(id: '1', name: 'Toast Soup', thumb: '');
+    await state.toggleFavorite(meal);
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: state,
+        child: const MaterialApp(
+          home: Scaffold(body: Stack(children: [FavoriteToastOverlay()])),
+        ),
+      ),
+    );
+    expect(find.text('Toast Soup ditambahkan ke Saved'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 2700));
+    expect(find.text('Toast Soup ditambahkan ke Saved'), findsNothing);
+  });
+
+  testWidgets('old chat-node navigation is not rendered', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Header(selectedTab: 0, onTabChanged: (_) {}),
+        ),
+      ),
+    );
+    expect(find.byKey(const Key('top-left-network-nav')), findsOneWidget);
+    expect(find.byKey(const Key('top-nav-home')), findsOneWidget);
+    expect(find.byKey(const Key('top-nav-saved')), findsOneWidget);
   });
 }
