@@ -106,43 +106,54 @@ class _OnboardingGateState extends State<OnboardingGate> {
 }
 
 
+
 class OnboardingPage extends StatefulWidget {
   final VoidCallback onComplete;
   const OnboardingPage({super.key, required this.onComplete});
   @override State<OnboardingPage> createState() => _OnboardingPageState();
 }
 class _OnboardingPageState extends State<OnboardingPage> {
-  final controller = PageController();
+  final pageController = PageController();
   int page = 0;
-  final titles = const ['Discover something delicious', 'Cook with confidence', 'Your recipe space'];
-  final descriptions = const ['Explore recipes from around the world.', 'See ingredients and clear instructions.', 'Save favorites for whenever inspiration strikes.'];
-  final icons = const [Icons.explore_rounded, Icons.menu_book_rounded, Icons.favorite_rounded];
-  Future<void> finish() async { final prefs = await SharedPreferences.getInstance(); await prefs.setBool('onboarding_complete', true); widget.onComplete(); }
-  @override void dispose() { controller.dispose(); super.dispose(); }
-  @override Widget build(BuildContext context) => Scaffold(body: SafeArea(child: Padding(padding: const EdgeInsets.all(24), child: Column(children: [
-    Row(children: [const Text('Pantom Meals', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)), const Spacer(), Text('${page + 1}/3', style: const TextStyle(color: muted))]),
-    Expanded(child: PageView.builder(controller: controller, itemCount: 3, onPageChanged: (value) => setState(() => page = value), itemBuilder: (_, index) => Column(mainAxisAlignment: MainAxisAlignment.center, children: [Container(width: 160, height: 160, decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(48)), child: Icon(icons[index], size: 76, color: mint)), const SizedBox(height: 36), Text(titles[index], textAlign: TextAlign.center, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800)), const SizedBox(height: 16), Text(descriptions[index], textAlign: TextAlign.center, style: const TextStyle(color: muted, fontSize: 16))]))),
-    Row(mainAxisAlignment: MainAxisAlignment.center, children: List.generate(3, (index) => Container(width: index == page ? 28 : 8, height: 8, margin: const EdgeInsets.all(4), decoration: BoxDecoration(color: index == page ? mint : surface2, borderRadius: BorderRadius.circular(8))))),
-    const SizedBox(height: 24),
-    SizedBox(width: double.infinity, height: 56, child: FilledButton(onPressed: page == 2 ? finish : () => controller.nextPage(duration: const Duration(milliseconds: 260), curve: Curves.easeOut), style: FilledButton.styleFrom(backgroundColor: mint, foregroundColor: bg), child: Text(page == 2 ? 'Get started' : 'Continue'))),
-    TextButton(onPressed: finish, child: const Text('Skip', style: TextStyle(color: muted))),
-  ]))));
+  final titles = const ['Discover delicious recipes', 'Cook with confidence', 'Save your favorites'];
+  final descriptions = const ['Explore meals from around the world.', 'Ingredients and instructions in one place.', 'Keep your best recipes close at hand.'];
+  Future<void> finish() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboarding_complete', true);
+    widget.onComplete();
+  }
+  @override void dispose() { pageController.dispose(); super.dispose(); }
+  @override Widget build(BuildContext context) {
+    return Scaffold(body: SafeArea(child: Padding(padding: const EdgeInsets.all(24), child: Column(children: [
+      Row(children: [const Text('Pantom Meals', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)), const Spacer(), Text('${page + 1}/3', style: const TextStyle(color: muted))]),
+      Expanded(child: PageView.builder(controller: pageController, itemCount: 3, onPageChanged: (value) => setState(() => page = value), itemBuilder: (_, index) => Column(mainAxisAlignment: MainAxisAlignment.center, children: [Container(width: 160, height: 160, decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(48)), child: const Icon(Icons.restaurant_rounded, size: 76, color: mint)), const SizedBox(height: 36), Text(titles[index], textAlign: TextAlign.center, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800)), const SizedBox(height: 16), Text(descriptions[index], textAlign: TextAlign.center, style: const TextStyle(color: muted, fontSize: 16))]))),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: List.generate(3, (index) => Container(width: index == page ? 28 : 8, height: 8, margin: const EdgeInsets.all(4), decoration: BoxDecoration(color: index == page ? mint : surface2, borderRadius: BorderRadius.circular(8))))),
+      const SizedBox(height: 24),
+      SizedBox(width: double.infinity, height: 56, child: FilledButton(onPressed: page == 2 ? finish : () => pageController.nextPage(duration: const Duration(milliseconds: 260), curve: Curves.easeOut), style: FilledButton.styleFrom(backgroundColor: mint, foregroundColor: bg), child: Text(page == 2 ? 'Get started' : 'Continue'))),
+      TextButton(onPressed: finish, child: const Text('Skip', style: TextStyle(color: muted))),
+    ]))));
+  }
 }
+
 class HomePage extends StatefulWidget { const HomePage({super.key}); @override State<HomePage> createState() => _HomePageState(); }
 class _HomePageState extends State<HomePage> {
   final search = TextEditingController();
   int tab = 0;
   @override void dispose() { search.dispose(); super.dispose(); }
-  @override Widget build(BuildContext context) { final state = context.watch<AppState>(); final meals = tab == 0 ? state.mealsList : state.mealsList.where((meal) => state.isFavorite(meal.id)).toList(); return Scaffold(body: SafeArea(child: RefreshIndicator(color: mint, onRefresh: state.loadMeals, child: CustomScrollView(slivers: [
-    SliverToBoxAdapter(child: Header()),
-    if (tab == 0) SliverToBoxAdapter(child: SearchHeader(controller: search, state: state)),
-    if (tab == 0 && state.search.isEmpty) SliverToBoxAdapter(child: CategoryStrip(state: state)),
-    SliverToBoxAdapter(child: SectionHeader(state: state, favorites: tab == 1)),
-    if (state.loading) const SliverToBoxAdapter(child: Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator(color: mint)))),
-    if (!state.loading && state.error != null) SliverToBoxAdapter(child: ErrorView(message: state.error!, retry: state.loadMeals)),
-    if (!state.loading && state.error == null && meals.isEmpty) SliverToBoxAdapter(child: EmptyView(message: tab == 1 ? 'Your favorite recipes will appear here' : 'No recipes found')),
-    if (!state.loading && state.error == null && meals.isNotEmpty) SliverPadding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 112), sliver: SliverGrid(delegate: SliverChildBuilderDelegate((_, index) => MealCard(meal: meals[index]), childCount: meals.length), gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 14, mainAxisSpacing: 16, childAspectRatio: .68))),
-  ]))), bottomNavigationBar: Padding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 20), child: FloatingNav(selected: tab, onChanged: (value) => setState(() => tab = value)))); }
+  @override Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final meals = tab == 0 ? state.mealsList : state.mealsList.where((meal) => state.isFavorite(meal.id)).toList();
+    return Scaffold(body: SafeArea(child: RefreshIndicator(color: mint, onRefresh: state.loadMeals, child: CustomScrollView(slivers: [
+      SliverToBoxAdapter(child: Header()),
+      if (tab == 0) SliverToBoxAdapter(child: SearchHeader(controller: search, state: state)),
+      if (tab == 0 && state.search.isEmpty) SliverToBoxAdapter(child: CategoryStrip(state: state)),
+      SliverToBoxAdapter(child: SectionHeader(state: state, favorites: tab == 1)),
+      if (state.loading) const SliverToBoxAdapter(child: Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator(color: mint)))),
+      if (!state.loading && state.error != null) SliverToBoxAdapter(child: ErrorView(message: state.error!, retry: state.loadMeals)),
+      if (!state.loading && state.error == null && meals.isEmpty) SliverToBoxAdapter(child: EmptyView(message: tab == 1 ? 'Your favorite recipes will appear here' : 'No recipes found')),
+      if (!state.loading && state.error == null && meals.isNotEmpty) SliverPadding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 112), sliver: SliverGrid(delegate: SliverChildBuilderDelegate((_, index) => MealCard(meal: meals[index]), childCount: meals.length), gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 14, mainAxisSpacing: 16, childAspectRatio: .68))),
+    ]))), bottomNavigationBar: Padding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 20), child: FloatingNav(selected: tab, onChanged: (value) => setState(() => tab = value))));
+  }
 }
 class Header extends StatelessWidget { const Header({super.key}); @override Widget build(BuildContext context) => Padding(padding: const EdgeInsets.fromLTRB(20, 18, 20, 8), child: Row(children: [Container(width: 44, height: 44, decoration: BoxDecoration(color: mint, borderRadius: BorderRadius.circular(15)), child: const Icon(Icons.restaurant_rounded, color: bg)), const SizedBox(width: 12), const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Pantom', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)), Text('MEALS', style: TextStyle(color: mint, fontSize: 11, letterSpacing: 2.4, fontWeight: FontWeight.bold))])), Container(decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(14)), child: IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_none_rounded)))])); }
 class SearchHeader extends StatelessWidget { final TextEditingController controller; final AppState state; const SearchHeader({super.key, required this.controller, required this.state}); @override Widget build(BuildContext context) => Padding(padding: const EdgeInsets.fromLTRB(20, 20, 20, 18), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Find your next', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800)), const Text('favorite recipe.', style: TextStyle(fontSize: 28, color: mint, fontWeight: FontWeight.w800)), const SizedBox(height: 20), TextField(controller: controller, onChanged: state.setSearch, decoration: InputDecoration(hintText: 'Search recipes...', prefixIcon: const Icon(Icons.search_rounded), filled: true, fillColor: surface, border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none)))])); }
