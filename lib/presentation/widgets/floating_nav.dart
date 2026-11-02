@@ -98,17 +98,27 @@ class _NavItem extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(26),
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(icon, size: 20, color: active ? bg : muted),
-              const SizedBox(width: 7),
-              Text(label,
-                  style: TextStyle(
+          child: Center(
+            key: Key('nav-content-$label'),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 20, color: active ? bg : muted),
+                  const SizedBox(width: 7),
+                  Text(
+                    label,
+                    style: TextStyle(
                       color: active ? bg : muted,
                       fontWeight: FontWeight.w800,
-                      fontSize: 13)),
-            ]),
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       );

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../logic/app_state.dart';
 import '../widgets/floating_nav.dart';
+import '../widgets/bottom_dock.dart';
 import '../widgets/header.dart';
 import '../widgets/list_controls.dart';
 import '../widgets/meal_card.dart';
@@ -58,10 +59,7 @@ class _HomePageState extends State<HomePage> {
                 slivers: [
                   const SliverToBoxAdapter(child: Header()),
                   if (!showingSaved)
-                    SliverToBoxAdapter(
-                      child: SearchHeader(
-                          controller: searchController, state: state),
-                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 8)),
                   if (!showingSaved && state.searchQuery.isEmpty)
                     SliverToBoxAdapter(child: CategoryStrip(state: state)),
                   SliverToBoxAdapter(
@@ -111,17 +109,25 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 128)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 198)),
                 ],
               ),
             ),
             Positioned(
               left: 0,
               right: 0,
-              bottom: 12,
-              child: FloatingNav(
-                selected: selectedTab,
-                onChanged: (value) => setState(() => selectedTab = value),
+              bottom: 8,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (!showingSaved)
+                    BottomDock(controller: searchController, state: state),
+                  const SizedBox(height: 10),
+                  FloatingNav(
+                    selected: selectedTab,
+                    onChanged: (value) => setState(() => selectedTab = value),
+                  ),
+                ],
               ),
             ),
           ],

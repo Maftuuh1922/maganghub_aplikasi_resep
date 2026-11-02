@@ -18,6 +18,7 @@ export 'presentation/pages/detail_page.dart';
 export 'presentation/pages/home_page.dart';
 export 'presentation/pages/onboarding_page.dart';
 export 'presentation/widgets/floating_nav.dart';
+export 'presentation/widgets/bottom_dock.dart';
 export 'presentation/widgets/header.dart';
 export 'presentation/widgets/list_controls.dart';
 export 'presentation/widgets/meal_card.dart';
