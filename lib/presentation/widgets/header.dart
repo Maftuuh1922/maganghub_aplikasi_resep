@@ -44,7 +44,7 @@ class Header extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (context) => SafeArea(
+      builder: (context) => const SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
