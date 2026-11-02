@@ -6,6 +6,7 @@ import '../../data/models/meal.dart';
 import '../../data/repositories/meal_repository.dart';
 import '../../data/services/meal_api_service.dart';
 import '../widgets/app_network_image.dart';
+import '../widgets/ingredient_list.dart';
 import '../widgets/meal_card.dart';
 import '../widgets/recipe_detail_sheet.dart';
 import '../widgets/status_views.dart';

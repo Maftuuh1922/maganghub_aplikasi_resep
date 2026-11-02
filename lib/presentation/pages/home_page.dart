@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../logic/app_state.dart';
@@ -146,6 +147,12 @@ class _RecipePageState extends State<_RecipePage>
   @override
   bool get wantKeepAlive => true;
 
+  double _ratioFor(String id) {
+    const ratios = <double>[.78, 1.0, .88, 1.12];
+    final value = int.tryParse(id) ?? id.hashCode;
+    return ratios[value.abs() % ratios.length];
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -197,17 +204,18 @@ class _RecipePageState extends State<_RecipePage>
               visibleMeals.isNotEmpty)
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (_, index) => MealCard(meal: visibleMeals[index]),
-                  childCount: visibleMeals.length,
-                ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 14,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: .68,
-                ),
+              sliver: SliverMasonryGrid.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                itemBuilder: (_, index) {
+                  final meal = visibleMeals[index];
+                  return AspectRatio(
+                    aspectRatio: _ratioFor(meal.id),
+                    child: MealCard(meal: meal),
+                  );
+                },
+                childCount: visibleMeals.length,
               ),
             ),
           // Reserve space so the floating search never covers the last card.

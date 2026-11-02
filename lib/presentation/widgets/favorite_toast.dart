@@ -38,66 +38,77 @@ class _FavoriteToastState extends State<FavoriteToast>
   Widget build(BuildContext context) => IgnorePointer(
         child: SafeArea(
           bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: SlideTransition(
-              position: _slide,
-              child: FadeTransition(
-                opacity: _fade,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: surface.withOpacity(.98),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: widget.notice.isError
-                          ? Colors.redAccent.withOpacity(.35)
-                          : (widget.notice.added
-                              ? mint.withOpacity(.45)
-                              : muted.withOpacity(.45)),
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black54,
-                        blurRadius: 18,
-                        offset: Offset(0, 8),
+          child: Material(
+            type: MaterialType.transparency,
+            child: DefaultTextStyle(
+              style: const TextStyle(color: Colors.white),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: SlideTransition(
+                  position: _slide,
+                  child: FadeTransition(
+                    opacity: _fade,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
                       ),
-                    ],
-                  ),
-                  child: Row(children: [
-                    Container(
-                      width: 32,
-                      height: 32,
                       decoration: BoxDecoration(
-                        color: widget.notice.added ? mint : surface2,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        widget.notice.added
-                            ? CupertinoIcons.heart_fill
-                            : CupertinoIcons.heart,
-                        size: 17,
-                        color: widget.notice.isError
-                            ? Colors.redAccent
-                            : (widget.notice.added ? bg : muted),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        widget.notice.message,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
+                        color: surface.withOpacity(.98),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: widget.notice.isError
+                              ? Colors.redAccent.withOpacity(.35)
+                              : (widget.notice.added
+                                  ? mint.withOpacity(.45)
+                                  : muted.withOpacity(.45)),
                         ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black54,
+                            blurRadius: 18,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
                       ),
+                      child: Row(children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: widget.notice.isError
+                                ? Colors.redAccent.withOpacity(.18)
+                                : (widget.notice.added ? mint : surface2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            widget.notice.isError
+                                ? CupertinoIcons.exclamationmark_triangle_fill
+                                : (widget.notice.added
+                                    ? CupertinoIcons.heart_fill
+                                    : CupertinoIcons.heart),
+                            size: 17,
+                            color: widget.notice.isError
+                                ? Colors.redAccent
+                                : (widget.notice.added ? bg : muted),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            widget.notice.message,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ]),
                     ),
-                  ]),
+                  ),
                 ),
               ),
             ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_theme.dart';
-import '../../data/models/ingredient.dart';
+import 'ingredient_list.dart';
 import '../../data/models/meal.dart';
 import '../../data/repositories/meal_repository.dart';
 import '../../data/services/meal_api_service.dart';
@@ -260,7 +260,7 @@ class _SheetBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionTitle('Ingredients'),
+          _SectionTitle('Bahan · ${detail!.ingredients.length}'),
           const SizedBox(height: 12),
           IngredientList(ingredients: detail!.ingredients),
           const SizedBox(height: 24),
@@ -331,66 +331,6 @@ class _SectionTitle extends StatelessWidget {
         text,
         style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w800),
       );
-}
-
-class IngredientList extends StatelessWidget {
-  final List<Ingredient> ingredients;
-  const IngredientList({super.key, required this.ingredients});
-
-  @override
-  Widget build(BuildContext context) {
-    if (ingredients.isEmpty) {
-      return const Text('Bahan tidak tersedia.',
-          style: TextStyle(color: muted));
-    }
-    return Container(
-      key: const Key('ingredients-card'),
-      decoration: BoxDecoration(
-        color: readingSurface.withOpacity(.55),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        children: [
-          for (var index = 0; index < ingredients.length; index++) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 7),
-                    child: Icon(Icons.circle, size: 7, color: mint),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      ingredients[index].name,
-                      style: const TextStyle(fontSize: 15, color: readingText),
-                    ),
-                  ),
-                  if (ingredients[index].measure.trim().isNotEmpty) ...[
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: Text(
-                        ingredients[index].measure,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
-                        style: const TextStyle(fontSize: 14, color: muted),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            if (index < ingredients.length - 1)
-              const Divider(
-                  height: 1, indent: 30, endIndent: 14, color: surface2),
-          ],
-        ],
-      ),
-    );
-  }
 }
 
 class InstructionList extends StatelessWidget {

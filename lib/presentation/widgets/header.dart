@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
+import 'glass.dart';
 
 class Header extends StatelessWidget {
   final double pageOffset;
@@ -223,47 +224,46 @@ class _SegmentedNav extends StatelessWidget {
   Widget build(BuildContext context) {
     const segmentWidth = 84.0;
     final offset = pageOffset.clamp(0.0, 1.0);
-    return Container(
-      width: 176,
-      height: 56,
+    return Glass(
+      radius: BorderRadius.circular(30),
       padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: surface2,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            left: segmentWidth * offset,
-            top: 0,
-            width: segmentWidth,
-            height: 48,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: mint,
-                borderRadius: BorderRadius.circular(26),
+      child: SizedBox(
+        width: 176,
+        height: 56,
+        child: Stack(
+          children: [
+            Positioned(
+              left: segmentWidth * offset,
+              top: 0,
+              width: segmentWidth,
+              height: 48,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: mint,
+                  borderRadius: BorderRadius.circular(26),
+                ),
               ),
             ),
-          ),
-          Row(children: [
-            _Segment(
-              key: const Key('top-nav-home'),
-              icon: offset < .5
-                  ? Icons.restaurant_menu_rounded
-                  : Icons.restaurant_menu_outlined,
-              selected: offset < .5,
-              onTap: () => onChanged(0),
-            ),
-            _Segment(
-              key: const Key('top-nav-saved'),
-              icon: offset >= .5
-                  ? Icons.favorite_rounded
-                  : Icons.favorite_border_rounded,
-              selected: offset >= .5,
-              onTap: () => onChanged(1),
-            ),
-          ]),
-        ],
+            Row(children: [
+              _Segment(
+                key: const Key('top-nav-home'),
+                icon: offset < .5
+                    ? Icons.restaurant_menu_rounded
+                    : Icons.restaurant_menu_outlined,
+                selected: offset < .5,
+                onTap: () => onChanged(0),
+              ),
+              _Segment(
+                key: const Key('top-nav-saved'),
+                icon: offset >= .5
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+                selected: offset >= .5,
+                onTap: () => onChanged(1),
+              ),
+            ]),
+          ],
+        ),
       ),
     );
   }
@@ -305,13 +305,9 @@ class _ActionPill extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Container(
-        height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(
-          color: surface2,
-          borderRadius: BorderRadius.circular(30),
-        ),
+  Widget build(BuildContext context) => Glass(
+        radius: BorderRadius.circular(30),
+        padding: const EdgeInsets.all(4),
         child: Row(children: [
           Stack(children: [
             IconButton(

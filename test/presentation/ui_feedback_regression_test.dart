@@ -9,6 +9,7 @@ import 'package:pantom_meals/data/services/meal_api_service.dart';
 import 'package:pantom_meals/logic/app_state.dart';
 import 'package:pantom_meals/presentation/widgets/app_network_image.dart';
 import 'package:pantom_meals/presentation/widgets/header.dart';
+import 'package:pantom_meals/presentation/widgets/ingredient_list.dart';
 import 'package:pantom_meals/presentation/widgets/list_controls.dart';
 import 'package:pantom_meals/presentation/widgets/meal_card.dart';
 import 'package:pantom_meals/presentation/widgets/recipe_detail_sheet.dart';
@@ -133,7 +134,7 @@ void main() {
     ];
 
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
             child: IngredientList(ingredients: ingredients),
