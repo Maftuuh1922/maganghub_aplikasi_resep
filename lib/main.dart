@@ -643,8 +643,11 @@ class FloatingNav extends StatelessWidget {
   final int selected;
   final ValueChanged<int> onChanged;
 
-  const FloatingNav(
-      {super.key, required this.selected, required this.onChanged});
+  const FloatingNav({
+    super.key,
+    required this.selected,
+    required this.onChanged,
+  });
 
   void _handleSwipe(DragEndDetails details) {
     final velocity = details.primaryVelocity ?? 0;
@@ -654,70 +657,77 @@ class FloatingNav extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          final slotWidth = (constraints.maxWidth - 8) / 2;
-          return GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onHorizontalDragEnd: _handleSwipe,
-            child: Container(
-              height: 72,
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: surface2,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(.32),
-                    blurRadius: 24,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOutCubic,
-                    left: selected * slotWidth,
-                    top: 0,
-                    bottom: 0,
-                    width: slotWidth,
-                    child: Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: mint,
-                          borderRadius: BorderRadius.circular(19),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _NavDestination(
-                          icon: CupertinoIcons.house_fill,
-                          label: 'Home',
-                          active: selected == 0,
-                          onTap: () => onChanged(0),
-                        ),
-                      ),
-                      Expanded(
-                        child: _NavDestination(
-                          icon: CupertinoIcons.heart_fill,
-                          label: 'Saved',
-                          active: selected == 1,
-                          onTap: () => onChanged(1),
-                        ),
+  Widget build(BuildContext context) => Align(
+        alignment: Alignment.center,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 320),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final slotWidth = constraints.maxWidth / 2;
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onHorizontalDragEnd: _handleSwipe,
+                child: Container(
+                  key: const Key('floating-nav-pill'),
+                  height: 68,
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: surface2,
+                    borderRadius: BorderRadius.circular(32),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(.34),
+                        blurRadius: 22,
+                        offset: const Offset(0, 9),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          );
-        },
+                  child: Stack(
+                    children: [
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 220),
+                        curve: Curves.easeOutCubic,
+                        left: selected * slotWidth,
+                        top: 0,
+                        bottom: 0,
+                        width: slotWidth,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: mint,
+                              borderRadius: BorderRadius.circular(26),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _NavDestination(
+                              icon: CupertinoIcons.house_fill,
+                              label: 'Home',
+                              active: selected == 0,
+                              onTap: () => onChanged(0),
+                            ),
+                          ),
+                          Expanded(
+                            child: _NavDestination(
+                              icon: CupertinoIcons.heart_fill,
+                              label: 'Saved',
+                              active: selected == 1,
+                              onTap: () => onChanged(1),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       );
 }
 
