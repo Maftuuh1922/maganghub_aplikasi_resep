@@ -63,6 +63,14 @@ void main() {
     expect(find.byIcon(CupertinoIcons.heart_fill), findsOneWidget);
   });
 
+  testWidgets('floating navigation stays compact and pill-shaped',
+      (tester) async {
+    await tester.pumpWidget(const _NavigationHarness());
+    final bounds = tester.getRect(find.byKey(const Key('floating-nav-pill')));
+    expect(bounds.height, 68);
+    expect(bounds.width, lessThanOrEqualTo(320));
+  });
+
   testWidgets('notification control opens its panel', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Header())));
     await tester.tap(find.byIcon(CupertinoIcons.bell));
