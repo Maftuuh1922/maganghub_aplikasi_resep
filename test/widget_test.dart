@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pantom_meals/main.dart';
@@ -60,12 +59,12 @@ void main() {
     await tester.flingFrom(bounds.center, const Offset(-300, 0), 1500);
     await tester.pumpAndSettle();
     expect(find.text('page 1'), findsOneWidget);
-    expect(find.byIcon(CupertinoIcons.heart_fill), findsOneWidget);
+    expect(find.byIcon(Icons.favorite), findsOneWidget);
   });
 
   testWidgets('notification control opens its panel', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Header())));
-    await tester.tap(find.byIcon(CupertinoIcons.bell));
+    await tester.tap(find.byIcon(Icons.notifications));
     await tester.pumpAndSettle();
     expect(find.text('Notifications'), findsOneWidget);
     expect(find.text("You're all caught up"), findsOneWidget);

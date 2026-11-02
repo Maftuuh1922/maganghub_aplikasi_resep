@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -488,14 +487,14 @@ class Header extends StatelessWidget {
                       color: surface2, borderRadius: BorderRadius.circular(4))),
               const SizedBox(height: 22),
               const Row(children: [
-                Icon(CupertinoIcons.bell, color: mint),
+                Icon(Icons.notifications, color: mint),
                 SizedBox(width: 10),
                 Text('Notifications',
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
               ]),
               const SizedBox(height: 26),
-              const Icon(CupertinoIcons.bell_slash, size: 38, color: muted),
+              const Icon(Icons.notifications_off, size: 38, color: muted),
               const SizedBox(height: 12),
               const Text("You're all caught up",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
@@ -518,7 +517,7 @@ class Header extends StatelessWidget {
               height: 44,
               decoration: BoxDecoration(
                   color: mint, borderRadius: BorderRadius.circular(15)),
-              child: const Icon(CupertinoIcons.book_fill, color: bg, size: 21)),
+              child: const Icon(Icons.book, color: bg, size: 21)),
           const SizedBox(width: 12),
           const Expanded(
               child: Column(
@@ -540,7 +539,7 @@ class Header extends StatelessWidget {
             child: IconButton(
               tooltip: 'Notifications',
               onPressed: () => _showNotifications(context),
-              icon: const Icon(CupertinoIcons.bell),
+              icon: const Icon(Icons.notifications),
             ),
           ),
         ]),
@@ -567,7 +566,7 @@ class SearchHeader extends StatelessWidget {
             onChanged: state.setSearch,
             decoration: InputDecoration(
                 hintText: 'Search recipes...',
-                prefixIcon: const Icon(CupertinoIcons.search),
+                prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: surface,
                 border: OutlineInputBorder(
@@ -697,7 +696,7 @@ class FloatingNav extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _NavDestination(
-                          icon: CupertinoIcons.house_fill,
+                          icon: Icons.home,
                           label: 'Home',
                           active: selected == 0,
                           onTap: () => onChanged(0),
@@ -705,7 +704,7 @@ class FloatingNav extends StatelessWidget {
                       ),
                       Expanded(
                         child: _NavDestination(
-                          icon: CupertinoIcons.heart_fill,
+                          icon: Icons.favorite,
                           label: 'Saved',
                           active: selected == 1,
                           onTap: () => onChanged(1),
@@ -797,8 +796,8 @@ class MealCard extends StatelessWidget {
                                 shape: BoxShape.circle),
                             child: Icon(
                                 state.isFavorite(meal.id)
-                                    ? CupertinoIcons.heart_fill
-                                    : CupertinoIcons.heart,
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
                                 color: state.isFavorite(meal.id)
                                     ? mint
                                     : Colors.white))))
@@ -828,14 +827,14 @@ class DetailPage extends StatelessWidget {
           backgroundColor: bg,
           leading: IconButton(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(CupertinoIcons.chevron_back)),
+              icon: const Icon(Icons.arrow_back)),
           actions: [
             IconButton(
                 onPressed: () => state.toggleFavorite(meal.id),
                 icon: Icon(
                     state.isFavorite(meal.id)
-                        ? CupertinoIcons.heart_fill
-                        : CupertinoIcons.heart,
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     color: mint))
           ],
           flexibleSpace: FlexibleSpaceBar(
@@ -918,7 +917,7 @@ class ErrorView extends StatelessWidget {
       child: Padding(
           padding: const EdgeInsets.all(40),
           child: Column(children: [
-            const Icon(CupertinoIcons.wifi_slash, size: 44, color: muted),
+            const Icon(Icons.wifi_off, size: 44, color: muted),
             const SizedBox(height: 16),
             Text(message,
                 textAlign: TextAlign.center,
@@ -940,7 +939,7 @@ class EmptyView extends StatelessWidget {
       child: Padding(
           padding: const EdgeInsets.all(40),
           child: Column(children: [
-            const Icon(CupertinoIcons.book_fill, size: 42, color: muted),
+            const Icon(Icons.book, size: 42, color: muted),
             const SizedBox(height: 14),
             Text(message,
                 textAlign: TextAlign.center,
