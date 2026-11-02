@@ -30,8 +30,8 @@ ThemeData buildAppTheme() => ThemeData(
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        hintStyle: const TextStyle(color: muted),
+      inputDecorationTheme: const InputDecorationTheme(
+        hintStyle: TextStyle(color: muted),
         prefixIconColor: muted,
         filled: true,
         fillColor: surface,
