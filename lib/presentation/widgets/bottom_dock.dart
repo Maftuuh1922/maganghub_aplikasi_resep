@@ -24,15 +24,15 @@ class BottomDock extends StatelessWidget {
           onChanged: state.updateSearch,
           decoration: const InputDecoration(
             hintText: 'Cari resep...',
-            prefixIcon: const Icon(CupertinoIcons.search),
-            prefixIconConstraints: const BoxConstraints(
+            prefixIcon: Icon(CupertinoIcons.search),
+            prefixIconConstraints: BoxConstraints(
               minWidth: 52,
               minHeight: 58,
             ),
             isDense: true,
-            constraints: const BoxConstraints(minHeight: 58),
+            constraints: BoxConstraints(minHeight: 58),
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(
+            contentPadding: EdgeInsets.symmetric(
               horizontal: 18,
               vertical: 17,
             ),
