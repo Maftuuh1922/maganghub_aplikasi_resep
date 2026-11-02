@@ -156,8 +156,9 @@ class AppState extends ChangeNotifier {
     try {
       categoriesList = await api.categories();
       if (categoriesList.isNotEmpty &&
-          !categoriesList.any((c) => c.name == selected))
+          !categoriesList.any((c) => c.name == selected)) {
         selected = categoriesList.first.name;
+      }
       await loadMeals();
     } catch (_) {
       error = 'Unable to connect. Check your internet and try again.';
@@ -256,15 +257,17 @@ class _OnboardingGateState extends State<OnboardingGate> {
 
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
-    if (mounted)
+    if (mounted) {
       setState(() => completed = prefs.getBool('onboarding_complete') ?? false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (completed == null)
+    if (completed == null) {
       return const Scaffold(
           body: Center(child: CircularProgressIndicator(color: mint)));
+    }
     return completed!
         ? const HomePage()
         : OnboardingPage(onComplete: () => setState(() => completed = true));
@@ -843,9 +846,10 @@ class DetailPage extends StatelessWidget {
               child: FutureBuilder<Meal>(
                   future: Api().detail(meal.id),
                   builder: (_, snapshot) {
-                    if (!snapshot.hasData)
+                    if (!snapshot.hasData) {
                       return const Center(
                           child: CircularProgressIndicator(color: mint));
+                    }
                     final detail = snapshot.data!;
                     return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
