@@ -12,6 +12,24 @@ Recipe catalog mobile app for the Mobile Developer internship test.
 - Pull-to-refresh
 - Dark Pantom Wallet-inspired UI: deep navy, mint accent, large rounded surfaces
 
+## Architecture
+
+```text
+lib/
+├── core/theme/              # Shared colors and Material theme
+├── data/
+│   ├── models/              # Category, Meal, Ingredient JSON models
+│   ├── services/            # TheMealDB HTTP endpoints
+│   └── repositories/        # Data access boundary used by logic/UI
+├── logic/                   # App state and favorite persistence
+├── presentation/
+│   ├── pages/               # Onboarding, catalog, recipe detail
+│   └── widgets/             # Reusable cards, navigation, status views
+└── main.dart                # App composition and dependency wiring
+```
+
+`MealApiService` handles network/JSON, `MealRepository` exposes the app data operations, `AppState` manages UI state and local favorites, and presentation widgets render loading, empty, error/retry, and success states.
+
 ## API
 
 Recipe data is fetched from TheMealDB test key `1`:

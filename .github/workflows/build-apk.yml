@@ -24,8 +24,23 @@ jobs:
           cache: true
       - name: Create Android platform files
         run: flutter create --platforms=android --org com.ror --project-name pantom_meals .
+      - name: Add Android internet permission
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          manifest = Path('android/app/src/main/AndroidManifest.xml')
+          text = manifest.read_text()
+          permission = '<uses-permission android:name="android.permission.INTERNET" />'
+          marker = '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+          if permission not in text:
+              text = text.replace(marker, f'{marker}\n    {permission}')
+              manifest.write_text(text)
+          PY
       - name: Install dependencies
         run: flutter pub get
+      - name: Generate launcher icons
+        run: dart run flutter_launcher_icons
       - name: Analyze
         run: flutter analyze
       - name: Test
