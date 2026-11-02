@@ -8,6 +8,8 @@ import 'package:pantom_meals/data/repositories/meal_repository.dart';
 import 'package:pantom_meals/data/services/meal_api_service.dart';
 import 'package:pantom_meals/logic/app_state.dart';
 import 'package:pantom_meals/presentation/widgets/app_network_image.dart';
+import 'package:pantom_meals/presentation/widgets/bottom_dock.dart';
+import 'package:pantom_meals/presentation/widgets/glass.dart';
 import 'package:pantom_meals/presentation/widgets/header.dart';
 import 'package:pantom_meals/presentation/widgets/ingredient_list.dart';
 import 'package:pantom_meals/presentation/widgets/list_controls.dart';
@@ -150,6 +152,44 @@ void main() {
     expect(decoration.borderRadius, BorderRadius.circular(18));
     expect(find.text('Chicken breast'), findsOneWidget);
     expect(find.text('2 pcs'), findsOneWidget);
+  });
+
+  testWidgets('floating header has transparent 48dp icon areas',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Header(selectedTab: 0, onTabChanged: (_) {}),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(FloatingIconBar)).height, 48);
+    expect(tester.getSize(find.byKey(const Key('top-nav-home'))), Size(52, 48));
+    expect(
+        tester.getSize(find.byKey(const Key('top-nav-saved'))), Size(52, 48));
+    expect(tester.getSize(find.byKey(const Key('top-notification-button'))),
+        Size(48, 48));
+    expect(
+        tester.getSize(find.byKey(const Key('top-more-button'))), Size(48, 48));
+    expect(find.byType(FloatingGlass), findsNothing);
+  });
+
+  testWidgets('search bar uses compact 48dp glass surface', (tester) async {
+    final state = AppState(_UiRepository());
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: BottomDock(
+            controller: TextEditingController(),
+            state: state,
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(FloatingGlass)).height, 48);
+    expect(find.text('Cari resep...'), findsOneWidget);
   });
 
   testWidgets('dummy notifications can be dismissed', (tester) async {

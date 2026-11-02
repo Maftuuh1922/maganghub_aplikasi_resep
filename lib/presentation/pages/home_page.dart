@@ -5,6 +5,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../core/theme/app_theme.dart';
 import '../../logic/app_state.dart';
 import '../widgets/bottom_dock.dart';
+import '../widgets/glass.dart';
 import '../widgets/header.dart';
 import '../widgets/list_controls.dart';
 import '../widgets/meal_card.dart';
@@ -67,14 +68,38 @@ class _HomePageState extends State<HomePage> {
           if (!didPop && selectedTab == 1) _selectPage(0);
         },
         child: Scaffold(
-          body: SafeArea(
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Column(
-                  children: [
-                    // Header stays outside PageView and every scrollable list.
-                    AnimatedBuilder(
+          resizeToAvoidBottomInset: false,
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              final media = MediaQuery.of(context);
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  PageView(
+                    controller: pageController,
+                    onPageChanged: (value) {
+                      if (selectedTab != value) {
+                        setState(() => selectedTab = value);
+                      }
+                    },
+                    children: [
+                      _RecipePage(
+                        key: const PageStorageKey<String>('home-recipes'),
+                        state: state,
+                        showingSaved: false,
+                      ),
+                      _RecipePage(
+                        key: const PageStorageKey<String>('saved-recipes'),
+                        state: state,
+                        showingSaved: true,
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    top: media.padding.top + kHeaderTopSpacing,
+                    left: 0,
+                    right: 0,
+                    child: AnimatedBuilder(
                       animation: pageController,
                       builder: (context, _) {
                         final offset = pageController.hasClients
@@ -88,41 +113,21 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                     ),
-                    Expanded(
-                      child: PageView(
-                        controller: pageController,
-                        onPageChanged: (value) {
-                          if (selectedTab != value) {
-                            setState(() => selectedTab = value);
-                          }
-                        },
-                        children: [
-                          _RecipePage(
-                            key: const PageStorageKey<String>('home-recipes'),
-                            state: state,
-                            showingSaved: false,
-                          ),
-                          _RecipePage(
-                            key: const PageStorageKey<String>('saved-recipes'),
-                            state: state,
-                            showingSaved: true,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 8,
-                  child: BottomDock(
-                    controller: searchController,
-                    state: state,
                   ),
-                ),
-              ],
-            ),
+                  Positioned(
+                    left: kSearchBarHorizontalMargin,
+                    right: kSearchBarHorizontalMargin,
+                    bottom: media.padding.bottom +
+                        media.viewInsets.bottom +
+                        kFloatingBarBottomSpacing,
+                    child: BottomDock(
+                      controller: searchController,
+                      state: state,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       );
@@ -158,15 +163,26 @@ class _RecipePageState extends State<_RecipePage>
     super.build(context);
     final state = widget.state;
     final visibleMeals = widget.showingSaved ? state.savedMeals : state.meals;
+    final media = MediaQuery.of(context);
+    final listTopPadding = media.padding.top +
+        kHeaderTopSpacing +
+        kFloatingBarHeight +
+        kFloatingContentGap;
+    final listBottomPadding = kFloatingBarHeight +
+        kFloatingBarBottomSpacing +
+        media.padding.bottom +
+        kFloatingListBottomExtra;
 
     return RefreshIndicator(
       color: mint,
+      edgeOffset: listTopPadding,
       onRefresh: state.loadMeals,
       child: CustomScrollView(
         key: PageStorageKey<String>(
           widget.showingSaved ? 'saved-scroll' : 'home-scroll',
         ),
         slivers: [
+          SliverToBoxAdapter(child: SizedBox(height: listTopPadding)),
           if (!widget.showingSaved && state.searchQuery.isEmpty)
             SliverToBoxAdapter(child: CategoryStrip(state: state)),
           SliverToBoxAdapter(
@@ -218,8 +234,7 @@ class _RecipePageState extends State<_RecipePage>
                 childCount: visibleMeals.length,
               ),
             ),
-          // Reserve space so the floating search never covers the last card.
-          const SliverToBoxAdapter(child: SizedBox(height: 104)),
+          SliverToBoxAdapter(child: SizedBox(height: listBottomPadding)),
         ],
       ),
     );

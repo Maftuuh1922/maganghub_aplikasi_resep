@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
-import 'glass.dart';
+
+const double kHeaderBarHeight = 48;
+const double kHeaderSegmentWidth = 52;
+const double kHeaderActionWidth = 48;
+const double kHeaderIndicatorHeight = 40;
+const double kHeaderIconSize = 22;
+const double kHeaderTopSpacing = 8;
+const double kHeaderUnselectedCircleSize = 40;
+const Color kHeaderIconColor = Color(0xB3FFFFFF);
+const Color kHeaderIconShadowColor = Color(0x99000000);
+const Color kHeaderUnselectedCircleColor = Color(0x40000000);
 
 class Header extends StatelessWidget {
   final double pageOffset;
@@ -21,21 +31,14 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _SegmentedNav(
-              key: const Key('top-left-network-nav'),
-              pageOffset: selectedTab?.toDouble() ?? pageOffset,
-              onChanged: onTabChanged,
-            ),
-            _ActionPill(
-              hasNotification: hasNotification,
-              onNotification: () => _showNotifications(context),
-              onMore: () => _showMore(context),
-            ),
-          ],
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: FloatingIconBar(
+          key: const Key('floating-icon-bar'),
+          pageOffset: selectedTab?.toDouble() ?? pageOffset,
+          onTabChanged: onTabChanged,
+          hasNotification: hasNotification,
+          onNotification: () => _showNotifications(context),
+          onMore: () => _showMore(context),
         ),
       );
 
@@ -210,71 +213,108 @@ class Header extends StatelessWidget {
   }
 }
 
-class _SegmentedNav extends StatelessWidget {
+class FloatingIconBar extends StatelessWidget {
   final double pageOffset;
-  final ValueChanged<int> onChanged;
+  final ValueChanged<int> onTabChanged;
+  final bool hasNotification;
+  final VoidCallback onNotification;
+  final VoidCallback onMore;
 
-  const _SegmentedNav({
+  const FloatingIconBar({
     super.key,
     required this.pageOffset,
-    required this.onChanged,
+    required this.onTabChanged,
+    required this.hasNotification,
+    required this.onNotification,
+    required this.onMore,
   });
 
   @override
   Widget build(BuildContext context) {
-    const segmentWidth = 84.0;
-    final offset = pageOffset.clamp(0.0, 1.0);
-    return Glass(
-      radius: BorderRadius.circular(30),
-      padding: const EdgeInsets.all(4),
-      child: SizedBox(
-        width: 176,
-        height: 56,
-        child: Stack(
-          children: [
-            Positioned(
-              left: segmentWidth * offset,
-              top: 0,
-              width: segmentWidth,
-              height: 48,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: mint,
-                  borderRadius: BorderRadius.circular(26),
-                ),
-              ),
+    final offset = pageOffset.clamp(0.0, 1.0).toDouble();
+    return SizedBox(
+      height: kHeaderBarHeight,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            key: const Key('top-left-network-nav'),
+            width: kHeaderSegmentWidth * 2,
+            height: kHeaderBarHeight,
+            child: _SegmentedIconBar(
+              pageOffset: offset,
+              onTabChanged: onTabChanged,
             ),
-            Row(children: [
-              _Segment(
-                key: const Key('top-nav-home'),
-                icon: offset < .5
-                    ? Icons.restaurant_menu_rounded
-                    : Icons.restaurant_menu_outlined,
-                selected: offset < .5,
-                onTap: () => onChanged(0),
-              ),
-              _Segment(
-                key: const Key('top-nav-saved'),
-                icon: offset >= .5
-                    ? Icons.favorite_rounded
-                    : Icons.favorite_border_rounded,
-                selected: offset >= .5,
-                onTap: () => onChanged(1),
-              ),
-            ]),
-          ],
-        ),
+          ),
+          _ActionIconBar(
+            hasNotification: hasNotification,
+            onNotification: onNotification,
+            onMore: onMore,
+          ),
+        ],
       ),
     );
   }
 }
 
-class _Segment extends StatelessWidget {
+class _SegmentedIconBar extends StatelessWidget {
+  final double pageOffset;
+  final ValueChanged<int> onTabChanged;
+
+  const _SegmentedIconBar({
+    required this.pageOffset,
+    required this.onTabChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: kHeaderSegmentWidth * 2,
+        height: kHeaderBarHeight,
+        child: Stack(
+          children: [
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              left: kHeaderSegmentWidth * pageOffset,
+              top: (kHeaderBarHeight - kHeaderIndicatorHeight) / 2,
+              width: kHeaderSegmentWidth,
+              height: kHeaderIndicatorHeight,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: mint,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+            ),
+            Row(children: [
+              _SegmentIcon(
+                key: const Key('top-nav-home'),
+                icon: pageOffset < .5
+                    ? Icons.restaurant_menu_rounded
+                    : Icons.restaurant_menu_outlined,
+                selected: pageOffset < .5,
+                onTap: () => onTabChanged(0),
+              ),
+              _SegmentIcon(
+                key: const Key('top-nav-saved'),
+                icon: pageOffset >= .5
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+                selected: pageOffset >= .5,
+                onTap: () => onTabChanged(1),
+              ),
+            ]),
+          ],
+        ),
+      );
+}
+
+class _SegmentIcon extends StatelessWidget {
   final IconData icon;
   final bool selected;
   final VoidCallback onTap;
 
-  const _Segment({
+  const _SegmentIcon({
     super.key,
     required this.icon,
     required this.selected,
@@ -282,65 +322,118 @@ class _Segment extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Expanded(
+  Widget build(BuildContext context) => SizedBox(
+        width: kHeaderSegmentWidth,
+        height: kHeaderBarHeight,
         child: InkWell(
-          borderRadius: BorderRadius.circular(26),
+          borderRadius: BorderRadius.circular(24),
           onTap: onTap,
           child: Center(
-            child: Icon(icon, size: 24, color: selected ? bg : muted),
+            child: Icon(
+              icon,
+              size: kHeaderIconSize,
+              color: selected ? bg : kHeaderIconColor,
+              shadows: const [
+                Shadow(
+                  color: kHeaderIconShadowColor,
+                  blurRadius: 8,
+                ),
+              ],
+            ),
           ),
         ),
       );
 }
 
-class _ActionPill extends StatelessWidget {
+class _ActionIconBar extends StatelessWidget {
   final bool hasNotification;
   final VoidCallback onNotification;
   final VoidCallback onMore;
 
-  const _ActionPill({
+  const _ActionIconBar({
     required this.hasNotification,
     required this.onNotification,
     required this.onMore,
   });
 
   @override
-  Widget build(BuildContext context) => Glass(
-        radius: BorderRadius.circular(30),
-        padding: const EdgeInsets.all(4),
+  Widget build(BuildContext context) => SizedBox(
+        width: kHeaderActionWidth * 2,
+        height: kHeaderBarHeight,
         child: Row(children: [
-          Stack(children: [
-            IconButton(
-              key: const Key('top-notification-button'),
-              tooltip: 'Notifications',
-              onPressed: onNotification,
-              icon: const Icon(Icons.notifications_none_rounded, size: 24),
-              color: Colors.white,
-              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          _ActionIcon(
+            key: const Key('top-notification-button'),
+            icon: Icons.notifications_none_rounded,
+            onTap: onNotification,
+            hasBadge: hasNotification,
+          ),
+          _ActionIcon(
+            key: const Key('top-more-button'),
+            icon: Icons.more_horiz_rounded,
+            onTap: onMore,
+          ),
+        ]),
+      );
+}
+
+class _ActionIcon extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool hasBadge;
+
+  const _ActionIcon({
+    super.key,
+    required this.icon,
+    required this.onTap,
+    this.hasBadge = false,
+  });
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: kHeaderActionWidth,
+        height: kHeaderBarHeight,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            InkWell(
+              borderRadius: BorderRadius.circular(24),
+              onTap: onTap,
+              child: Container(
+                width: kHeaderUnselectedCircleSize,
+                height: kHeaderUnselectedCircleSize,
+                decoration: const BoxDecoration(
+                  color: kHeaderUnselectedCircleColor,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  icon,
+                  size: kHeaderIconSize,
+                  color: kHeaderIconColor,
+                  shadows: const [
+                    Shadow(
+                      color: kHeaderIconShadowColor,
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+              ),
             ),
-            if (hasNotification)
+            if (hasBadge)
               Positioned(
-                top: 10,
-                right: 10,
+                top: 7,
+                right: 7,
                 child: Container(
-                  width: 8,
-                  height: 8,
+                  width: 7,
+                  height: 7,
                   decoration: const BoxDecoration(
                     color: mint,
                     shape: BoxShape.circle,
                   ),
                 ),
               ),
-          ]),
-          IconButton(
-            key: const Key('top-more-button'),
-            tooltip: 'More',
-            onPressed: onMore,
-            icon: const Icon(Icons.more_horiz_rounded, size: 24),
-            color: muted,
-            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-          ),
-        ]),
+          ],
+        ),
       );
 }
 

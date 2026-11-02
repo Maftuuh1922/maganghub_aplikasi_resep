@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:pantom_meals/main.dart';
 import 'package:pantom_meals/presentation/widgets/favorite_toast.dart';
+import 'package:pantom_meals/presentation/widgets/glass.dart';
 
 class _UiRepository extends MealRepository {
   _UiRepository() : super(MealApiService());
@@ -112,7 +113,8 @@ void main() {
     );
     final pill = find.byKey(const Key('bottom-search-pill'));
     expect(pill, findsOneWidget);
-    expect(tester.getSize(pill).height, greaterThanOrEqualTo(58));
+    expect(tester.getSize(pill).height, 48);
+    expect(find.byType(FloatingGlass), findsOneWidget);
     expect(find.byKey(const Key('bottom-search-field')), findsOneWidget);
     expect(find.byKey(const Key('bottom-notification-button')), findsNothing);
   });
@@ -189,6 +191,7 @@ void main() {
     expect(find.byKey(const Key('top-left-network-nav')), findsOneWidget);
     expect(find.byKey(const Key('top-nav-home')), findsOneWidget);
     expect(find.byKey(const Key('top-nav-saved')), findsOneWidget);
-    expect(find.byType(ColoredBox), findsNothing);
+    expect(tester.getSize(find.byType(FloatingIconBar)).height, 48);
+    expect(find.byType(FloatingGlass), findsNothing);
   });
 }
