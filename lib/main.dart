@@ -85,9 +85,30 @@ class AppState extends ChangeNotifier {
     loading = false; notifyListeners();
   }
   void choose(String value) { selected = value; search = ''; loadMeals(); }
-  void setSearch(String value) { search = value; if (value.trim().isEmpty) loadMeals(); else _searchDebounced(value); }
-  Future<void> _searchDebounced(String value) async { await Future.delayed(const Duration(milliseconds: 450)); if (value == search) await loadMeals(); }
-  Future<void> toggleFavorite(String id) async { if (favorites.contains(id)) favorites.remove(id); else favorites.add(id); notifyListeners(); final p = await SharedPreferences.getInstance(); await p.setStringList('favorites', favorites.toList()); }
+  void setSearch(String value) {
+    search = value;
+    if (value.trim().isEmpty) {
+      loadMeals();
+    } else {
+      _searchDebounced(value);
+    }
+  }
+  Future<void> _searchDebounced(String value) async {
+    await Future.delayed(const Duration(milliseconds: 450));
+    if (value == search) {
+      await loadMeals();
+    }
+  }
+  Future<void> toggleFavorite(String id) async {
+    if (favorites.contains(id)) {
+      favorites.remove(id);
+    } else {
+      favorites.add(id);
+    }
+    notifyListeners();
+    final p = await SharedPreferences.getInstance();
+    await p.setStringList('favorites', favorites.toList());
+  }
   bool isFavorite(String id) => favorites.contains(id);
 }
 
@@ -144,7 +165,7 @@ class _HomePageState extends State<HomePage> {
     final state = context.watch<AppState>();
     final meals = tab == 0 ? state.mealsList : state.mealsList.where((meal) => state.isFavorite(meal.id)).toList();
     return Scaffold(body: SafeArea(child: RefreshIndicator(color: mint, onRefresh: state.loadMeals, child: CustomScrollView(slivers: [
-      SliverToBoxAdapter(child: Header()),
+      const SliverToBoxAdapter(child: Header()),
       if (tab == 0) SliverToBoxAdapter(child: SearchHeader(controller: search, state: state)),
       if (tab == 0 && state.search.isEmpty) SliverToBoxAdapter(child: CategoryStrip(state: state)),
       SliverToBoxAdapter(child: SectionHeader(state: state, favorites: tab == 1)),
