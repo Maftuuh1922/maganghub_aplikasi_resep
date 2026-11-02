@@ -12,6 +12,17 @@ Recipe catalog mobile app for the Mobile Developer internship test.
 - Pull-to-refresh
 - Dark Pantom Wallet-inspired UI: deep navy, mint accent, large rounded surfaces
 
+## API
+
+Recipe data is fetched from TheMealDB test key `1`:
+
+- Categories: `categories.php`
+- Category list: `filter.php?c=<category>`
+- Search: `search.php?s=<query>`
+- Full recipe details: `lookup.php?i=<idMeal>`
+
+The API base URL is `https://www.themealdb.com/api/json/v1/1/`.
+
 ## Run locally
 
 ```bash
