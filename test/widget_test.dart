@@ -1,1 +1,72 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7CmltcG9ydCAncGFja2FnZTpmbHV0dGVyX3Rlc3QvZmx1dHRlcl90ZXN0LmRhcnQnOwppbXBvcnQgJ3BhY2thZ2U6cGFudG9tX21lYWxzL21haW4uZGFydCc7CmltcG9ydCAncGFja2FnZTpzaGFyZWRfcHJlZmVyZW5jZXMvc2hhcmVkX3ByZWZlcmVuY2VzLmRhcnQnOwoKY2xhc3MgX05hdmlnYXRpb25IYXJuZXNzIGV4dGVuZHMgU3RhdGVmdWxXaWRnZXQgewogIGNvbnN0IF9OYXZpZ2F0aW9uSGFybmVzcygpOwoKICBAb3ZlcnJpZGUKICBTdGF0ZTxfTmF2aWdhdGlvbkhhcm5lc3M+IGNyZWF0ZVN0YXRlKCkgPT4gX05hdmlnYXRpb25IYXJuZXNzU3RhdGUoKTsKfQoKY2xhc3MgX05hdmlnYXRpb25IYXJuZXNzU3RhdGUgZXh0ZW5kcyBTdGF0ZTxfTmF2aWdhdGlvbkhhcm5lc3M+IHsKICBpbnQgc2VsZWN0ZWQgPSAwOwoKICBAb3ZlcnJpZGUKICBXaWRnZXQgYnVpbGQoQnVpbGRDb250ZXh0IGNvbnRleHQpID0+IE1hdGVyaWFsQXBwKAogICAgICAgIGhvbWU6IFNjYWZmb2xkKAogICAgICAgICAgYm9keTogQ2VudGVyKGNoaWxkOiBUZXh0KCdwYWdlICRzZWxlY3RlZCcpKSwKICAgICAgICAgIGJvdHRvbU5hdmlnYXRpb25CYXI6IFBhZGRpbmcoCiAgICAgICAgICAgIHBhZGRpbmc6IGNvbnN0IEVkZ2VJbnNldHMuYWxsKDE2KSwKICAgICAgICAgICAgY2hpbGQ6IEZsb2F0aW5nTmF2KAogICAgICAgICAgICAgIHNlbGVjdGVkOiBzZWxlY3RlZCwKICAgICAgICAgICAgICBvbkNoYW5nZWQ6ICh2YWx1ZSkgPT4gc2V0U3RhdGUoKCkgPT4gc2VsZWN0ZWQgPSB2YWx1ZSksCiAgICAgICAgICAgICksCiAgICAgICAgICApLAogICAgICAgICksCiAgICAgICk7Cn0KCnZvaWQgbWFpbigpIHsKICBzZXRVcCgoKSB7CiAgICBTaGFyZWRQcmVmZXJlbmNlcy5zZXRNb2NrSW5pdGlhbFZhbHVlcyh7fSk7CiAgfSk7CgogIHRlc3RXaWRnZXRzKCdmaXJzdCBsYXVuY2ggc2hvd3Mgb25ib2FyZGluZycsICh0ZXN0ZXIpIGFzeW5jIHsKICAgIGF3YWl0IHRlc3Rlci5wdW1wV2lkZ2V0KGNvbnN0IFBhbnRvbU1lYWxzQXBwKCkpOwogICAgYXdhaXQgdGVzdGVyLnB1bXAoKTsKICAgIGF3YWl0IHRlc3Rlci5wdW1wKGNvbnN0IER1cmF0aW9uKG1pbGxpc2Vjb25kczogMTAwKSk7CiAgICBleHBlY3QoZmluZC50ZXh0KCdDb250aW51ZScpLCBmaW5kc09uZVdpZGdldCk7CiAgICBleHBlY3QoZmluZC50ZXh0KCcxLzMnKSwgZmluZHNPbmVXaWRnZXQpOwogICAgZXhwZWN0KAogICAgICBmaW5kLmJ5V2lkZ2V0UHJlZGljYXRlKAogICAgICAgICh3aWRnZXQpID0+CiAgICAgICAgICAgIHdpZGdldCBpcyBJbWFnZSAmJgogICAgICAgICAgICB3aWRnZXQuaW1hZ2UgaXMgQXNzZXRJbWFnZSAmJgogICAgICAgICAgICAod2lkZ2V0LmltYWdlIGFzIEFzc2V0SW1hZ2UpLmFzc2V0TmFtZSA9PQogICAgICAgICAgICAgICAgJ2Fzc2V0cy9vbmJvYXJkaW5nL29uYm9hcmRpbmdfMS5wbmcnLAogICAgICApLAogICAgICBmaW5kc09uZVdpZGdldCwKICAgICk7CiAgfSk7CgogIHRlc3RXaWRnZXRzKCdzd2lwaW5nIHRoZSBmbG9hdGluZyBuYXZpZ2F0aW9uIHNlbGVjdHMgdGhlIG5leHQgcGFnZScsCiAgICAgICh0ZXN0ZXIpIGFzeW5jIHsKICAgIGF3YWl0IHRlc3Rlci5wdW1wV2lkZ2V0KGNvbnN0IF9OYXZpZ2F0aW9uSGFybmVzcygpKTsKICAgIGZpbmFsIG5hdiA9IGZpbmQuYnlUeXBlKEZsb2F0aW5nTmF2KTsKICAgIGZpbmFsIGJvdW5kcyA9IHRlc3Rlci5nZXRSZWN0KG5hdik7CiAgICBhd2FpdCB0ZXN0ZXIuZmxpbmdGcm9tKGJvdW5kcy5jZW50ZXIsIGNvbnN0IE9mZnNldCgtMzAwLCAwKSwgMTUwMCk7CiAgICBhd2FpdCB0ZXN0ZXIucHVtcEFuZFNldHRsZSgpOwogICAgZXhwZWN0KGZpbmQudGV4dCgncGFnZSAxJyksIGZpbmRzT25lV2lkZ2V0KTsKICAgIGV4cGVjdChmaW5kLmJ5SWNvbihJY29ucy5mYXZvcml0ZSksIGZpbmRzT25lV2lkZ2V0KTsKICB9KTsKCiAgdGVzdFdpZGdldHMoJ25vdGlmaWNhdGlvbiBjb250cm9sIG9wZW5zIGl0cyBwYW5lbCcsICh0ZXN0ZXIpIGFzeW5jIHsKICAgIGF3YWl0IHRlc3Rlci5wdW1wV2lkZ2V0KGNvbnN0IE1hdGVyaWFsQXBwKGhvbWU6IFNjYWZmb2xkKGJvZHk6IEhlYWRlcigpKSkpOwogICAgYXdhaXQgdGVzdGVyLnRhcChmaW5kLmJ5SWNvbihJY29ucy5ub3RpZmljYXRpb25zKSk7CiAgICBhd2FpdCB0ZXN0ZXIucHVtcEFuZFNldHRsZSgpOwogICAgZXhwZWN0KGZpbmQudGV4dCgnTm90aWZpY2F0aW9ucycpLCBmaW5kc09uZVdpZGdldCk7CiAgICBleHBlY3QoZmluZC50ZXh0KCJZb3UncmUgYWxsIGNhdWdodCB1cCIpLCBmaW5kc09uZVdpZGdldCk7CiAgfSk7Cn0K
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:pantom_meals/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class _NavigationHarness extends StatefulWidget {
+  const _NavigationHarness();
+
+  @override
+  State<_NavigationHarness> createState() => _NavigationHarnessState();
+}
+
+class _NavigationHarnessState extends State<_NavigationHarness> {
+  int selected = 0;
+
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+        home: Scaffold(
+          body: Center(child: Text('page $selected')),
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.all(16),
+            child: FloatingNav(
+              selected: selected,
+              onChanged: (value) => setState(() => selected = value),
+            ),
+          ),
+        ),
+      );
+}
+
+void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  testWidgets('first launch shows onboarding', (tester) async {
+    await tester.pumpWidget(const PantomMealsApp());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Continue'), findsOneWidget);
+    expect(find.text('1/3'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Image &&
+            widget.image is AssetImage &&
+            (widget.image as AssetImage).assetName ==
+                'assets/onboarding/onboarding_1.png',
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('swiping the floating navigation selects the next page',
+      (tester) async {
+    await tester.pumpWidget(const _NavigationHarness());
+    final nav = find.byType(FloatingNav);
+    final bounds = tester.getRect(nav);
+    await tester.flingFrom(bounds.center, const Offset(-300, 0), 1500);
+    await tester.pumpAndSettle();
+    expect(find.text('page 1'), findsOneWidget);
+    expect(find.byIcon(Icons.favorite), findsOneWidget);
+  });
+
+  testWidgets('notification control opens its panel', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Header())));
+    await tester.tap(find.byIcon(Icons.notifications));
+    await tester.pumpAndSettle();
+    expect(find.text('Notifications'), findsOneWidget);
+    expect(find.text("You're all caught up"), findsOneWidget);
+  });
+}
