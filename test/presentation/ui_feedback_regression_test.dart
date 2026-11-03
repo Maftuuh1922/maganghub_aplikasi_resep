@@ -154,7 +154,7 @@ void main() {
     expect(find.text('2 pcs'), findsOneWidget);
   });
 
-  testWidgets('floating header has no pill backdrop, blur, or icon circles',
+  testWidgets('floating header has two separated glass capsules',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -164,18 +164,20 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(find.byType(FloatingIconBar)).height, 44);
+    expect(tester.getSize(find.byType(FloatingIconBar)).height, 48);
+    expect(tester.getSize(find.byKey(const Key('header-left-glass-pill'))),
+        const Size(112, 48));
+    expect(tester.getSize(find.byKey(const Key('header-right-glass-pill'))),
+        const Size(96, 48));
     expect(tester.getSize(find.byKey(const Key('top-nav-home'))),
-        const Size(52, 44));
+        const Size(52, 40));
     expect(tester.getSize(find.byKey(const Key('top-nav-saved'))),
-        const Size(52, 44));
+        const Size(52, 40));
     expect(tester.getSize(find.byKey(const Key('top-notification-button'))),
-        const Size(44, 44));
+        const Size(40, 40));
     expect(tester.getSize(find.byKey(const Key('top-more-button'))),
-        const Size(44, 44));
-    expect(find.byType(FloatingGlass), findsNothing);
-    expect(find.byType(BackdropFilter), findsNothing);
-    expect(find.byType(ClipRRect), findsNothing);
+        const Size(40, 40));
+    expect(find.byType(BackdropFilter), findsNWidgets(2));
     expect(find.byType(Card), findsNothing);
   });
 

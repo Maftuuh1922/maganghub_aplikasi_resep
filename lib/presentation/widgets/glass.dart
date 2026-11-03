@@ -14,43 +14,68 @@ const Color kSearchHintColor = Color(0x8CFFFFFF);
 const Color kSearchFillColor = Color(0xA616283A);
 const Color kSearchBorderColor = Color(0x14FFFFFF);
 const Color kSearchShadowColor = Color(0x59000000);
+const double kSearchBlurSigma = 14;
+const double kGlassShadowBlur = 24;
+const Offset kGlassShadowOffset = Offset(0, 8);
+const EdgeInsetsGeometry kNoGlassPadding = EdgeInsets.zero;
 
 class FloatingGlass extends StatelessWidget {
   final Widget child;
   final double height;
   final BorderRadius radius;
+  final EdgeInsetsGeometry padding;
+  final Color fillColor;
+  final Color borderColor;
+  final Color shadowColor;
+  final double blurSigma;
+  final double shadowBlur;
+  final Offset shadowOffset;
+  final bool overlayBorder;
+  final bool borderConsumesSpace;
 
   const FloatingGlass({
     super.key,
     required this.child,
     required this.height,
     required this.radius,
+    this.padding = kNoGlassPadding,
+    this.fillColor = kSearchFillColor,
+    this.borderColor = kSearchBorderColor,
+    this.shadowColor = kSearchShadowColor,
+    this.blurSigma = kSearchBlurSigma,
+    this.shadowBlur = kGlassShadowBlur,
+    this.shadowOffset = kGlassShadowOffset,
+    this.overlayBorder = true,
+    this.borderConsumesSpace = true,
   });
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
-        // Keep the shadow outside ClipRRect so it is not clipped.
+        // Outside the clip so the shadow is not cut off.
         decoration: BoxDecoration(
           borderRadius: radius,
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: kSearchShadowColor,
-              blurRadius: 24,
-              offset: Offset(0, 8),
+              color: shadowColor,
+              blurRadius: shadowBlur,
+              offset: shadowOffset,
             ),
           ],
         ),
         child: ClipRRect(
           borderRadius: radius,
           child: BackdropFilter(
-            // Blur the catalog behind the readable search surface.
-            filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+            // Blur the catalog behind the floating capsule.
+            filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
             child: Container(
               height: height,
+              padding: padding,
               decoration: BoxDecoration(
-                color: kSearchFillColor,
+                color: fillColor,
                 borderRadius: radius,
-                border: Border.all(color: kSearchBorderColor, width: 1),
+                border: overlayBorder && borderConsumesSpace
+                    ? Border.all(color: borderColor, width: 1)
+                    : null,
               ),
               child: child,
             ),

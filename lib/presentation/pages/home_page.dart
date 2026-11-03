@@ -159,7 +159,7 @@ class _RecipePageState extends State<_RecipePage>
     final media = MediaQuery.of(context);
     final listTopPadding = media.padding.top +
         kHeaderTopSpacing +
-        kHeaderBarHeight +
+        kHeaderPillHeight +
         kFloatingContentGap;
     final listBottomPadding = kSearchBarHeight +
         kSearchBarBottomSpacing +

@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
+import 'glass.dart';
 
-const double kHeaderBarHeight = 44;
+const double kHeaderBarHeight = 48;
+const double kHeaderPillHeight = 48;
+const double kHeaderPillPadding = 4;
 const double kHeaderSegmentWidth = 52;
 const double kHeaderIndicatorHeight = 40;
 const double kHeaderIconSize = 22;
 const double kHeaderTopSpacing = 8;
-const double kHeaderTapTarget = 44;
+const double kHeaderTapTarget = 40;
+const double kHeaderActionSlotWidth = 44;
+const double kHeaderNotificationBadgeSize = 7;
 const double kHeaderHorizontalMargin = 16;
-const Color kHeaderIconColor = Color(0xBFFFFFFF);
-const Color kHeaderIconShadowColor = Color(0x8A000000);
+const double kHeaderGlassOpacity = 0.70;
+const double kHeaderBorderOpacity = 0.10;
+const double kHeaderShadowOpacity = 0.40;
+const double kHeaderBlurSigma = 18;
+const double kHeaderShadowBlur = 24;
+const Color kHeaderGlassColor = Color(0xFF16283A);
+const Color kHeaderIconColor = Color(0xCCFFFFFF);
+const Color kHeaderShadowBaseColor = Colors.black;
 
 class Header extends StatelessWidget {
   final double pageOffset;
@@ -238,27 +249,58 @@ class FloatingIconBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final selected = pageOffset.round().clamp(0, 1).toInt();
     return SizedBox(
+      key: const Key('floating-icon-bar'),
       height: kHeaderBarHeight,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SegmentedIcons(
-            key: const Key('top-left-network-nav'),
-            icons: [
-              selected == 0
-                  ? Icons.restaurant_menu_rounded
-                  : Icons.restaurant_menu_outlined,
-              selected == 1
-                  ? Icons.favorite_rounded
-                  : Icons.favorite_border_rounded,
-            ],
-            selected: selected,
-            onTap: onTabChanged,
+          FloatingGlass(
+            key: const Key('header-left-glass-pill'),
+            height: kHeaderPillHeight,
+            radius: BorderRadius.circular(kHeaderPillHeight / 2),
+            padding: const EdgeInsets.all(kHeaderPillPadding),
+            fillColor: kHeaderGlassColor.withOpacity(kHeaderGlassOpacity),
+            borderColor: Colors.white.withOpacity(kHeaderBorderOpacity),
+            shadowColor:
+                kHeaderShadowBaseColor.withOpacity(kHeaderShadowOpacity),
+            blurSigma: kHeaderBlurSigma,
+            shadowBlur: kHeaderShadowBlur,
+            shadowOffset: const Offset(0, 8),
+            overlayBorder: true,
+            borderConsumesSpace: false,
+            child: SegmentedIcons(
+              key: const Key('top-left-network-nav'),
+              icons: [
+                selected == 0
+                    ? Icons.restaurant_menu_rounded
+                    : Icons.restaurant_menu_outlined,
+                selected == 1
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+              ],
+              selected: selected,
+              onTap: onTabChanged,
+            ),
           ),
-          _HeaderActionIcons(
-            hasNotification: hasNotification,
-            onNotification: onNotification,
-            onMore: onMore,
+          FloatingGlass(
+            key: const Key('header-right-glass-pill'),
+            height: kHeaderPillHeight,
+            radius: BorderRadius.circular(kHeaderPillHeight / 2),
+            padding: const EdgeInsets.all(kHeaderPillPadding),
+            fillColor: kHeaderGlassColor.withOpacity(kHeaderGlassOpacity),
+            borderColor: Colors.white.withOpacity(kHeaderBorderOpacity),
+            shadowColor:
+                kHeaderShadowBaseColor.withOpacity(kHeaderShadowOpacity),
+            blurSigma: kHeaderBlurSigma,
+            shadowBlur: kHeaderShadowBlur,
+            shadowOffset: const Offset(0, 8),
+            overlayBorder: true,
+            borderConsumesSpace: false,
+            child: _HeaderActionIcons(
+              hasNotification: hasNotification,
+              onNotification: onNotification,
+              onMore: onMore,
+            ),
           ),
         ],
       ),
@@ -281,13 +323,13 @@ class SegmentedIcons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final count = icons.length;
-    if (count == 0) return const SizedBox(height: kHeaderBarHeight);
+    if (count == 0) return const SizedBox(height: kHeaderIndicatorHeight);
     final activeIndex = selected.clamp(0, count - 1).toInt();
     final alignmentX = count == 1 ? 0.0 : -1 + 2 * activeIndex / (count - 1);
 
     return SizedBox(
       width: kHeaderSegmentWidth * count,
-      height: kHeaderBarHeight,
+      height: kHeaderIndicatorHeight,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -310,7 +352,7 @@ class SegmentedIcons extends StatelessWidget {
                 SizedBox(
                   key: Key(index == 0 ? 'top-nav-home' : 'top-nav-saved'),
                   width: kHeaderSegmentWidth,
-                  height: kHeaderBarHeight,
+                  height: kHeaderIndicatorHeight,
                   child: InkWell(
                     onTap: () => onTap(index),
                     child: Center(
@@ -320,14 +362,6 @@ class SegmentedIcons extends StatelessWidget {
                         color: index == activeIndex
                             ? Colors.black87
                             : kHeaderIconColor,
-                        shadows: index == activeIndex
-                            ? null
-                            : const [
-                                Shadow(
-                                  color: kHeaderIconShadowColor,
-                                  blurRadius: 8,
-                                ),
-                              ],
                       ),
                     ),
                   ),
@@ -353,18 +387,18 @@ class _HeaderActionIcons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: kHeaderTapTarget * 2,
-        height: kHeaderBarHeight,
+        width: kHeaderActionSlotWidth * 2,
+        height: kHeaderPillHeight,
         child: Row(
           children: [
             _HeaderIconButton(
-              key: const Key('top-notification-button'),
+              buttonKey: const Key('top-notification-button'),
               icon: Icons.notifications_none_rounded,
               onPressed: onNotification,
               hasBadge: hasNotification,
             ),
             _HeaderIconButton(
-              key: const Key('top-more-button'),
+              buttonKey: const Key('top-more-button'),
               icon: Icons.more_horiz_rounded,
               onPressed: onMore,
             ),
@@ -374,12 +408,13 @@ class _HeaderActionIcons extends StatelessWidget {
 }
 
 class _HeaderIconButton extends StatelessWidget {
+  final Key buttonKey;
   final IconData icon;
   final VoidCallback onPressed;
   final bool hasBadge;
 
   const _HeaderIconButton({
-    super.key,
+    required this.buttonKey,
     required this.icon,
     required this.onPressed,
     this.hasBadge = false,
@@ -387,6 +422,7 @@ class _HeaderIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
+        key: buttonKey,
         width: kHeaderTapTarget,
         height: kHeaderTapTarget,
         child: Stack(
@@ -414,12 +450,6 @@ class _HeaderIconButton extends StatelessWidget {
                 icon,
                 size: kHeaderIconSize,
                 color: kHeaderIconColor,
-                shadows: const [
-                  Shadow(
-                    color: kHeaderIconShadowColor,
-                    blurRadius: 8,
-                  ),
-                ],
               ),
             ),
             if (hasBadge)
@@ -427,8 +457,8 @@ class _HeaderIconButton extends StatelessWidget {
                 top: 4,
                 right: 4,
                 child: Container(
-                  width: 7,
-                  height: 7,
+                  width: kHeaderNotificationBadgeSize,
+                  height: kHeaderNotificationBadgeSize,
                   decoration: const BoxDecoration(
                     color: mint,
                     shape: BoxShape.circle,
