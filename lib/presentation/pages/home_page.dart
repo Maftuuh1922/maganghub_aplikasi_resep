@@ -69,65 +69,58 @@ class _HomePageState extends State<HomePage> {
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: LayoutBuilder(
-            builder: (context, constraints) {
-              final media = MediaQuery.of(context);
-              return Stack(
-                fit: StackFit.expand,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              PageView(
+                controller: pageController,
+                onPageChanged: (value) {
+                  if (selectedTab != value) {
+                    setState(() => selectedTab = value);
+                  }
+                },
                 children: [
-                  PageView(
-                    controller: pageController,
-                    onPageChanged: (value) {
-                      if (selectedTab != value) {
-                        setState(() => selectedTab = value);
-                      }
-                    },
-                    children: [
-                      _RecipePage(
-                        key: const PageStorageKey<String>('home-recipes'),
-                        state: state,
-                        showingSaved: false,
-                      ),
-                      _RecipePage(
-                        key: const PageStorageKey<String>('saved-recipes'),
-                        state: state,
-                        showingSaved: true,
-                      ),
-                    ],
+                  _RecipePage(
+                    key: const PageStorageKey<String>('home-recipes'),
+                    state: state,
+                    showingSaved: false,
                   ),
-                  Positioned(
-                    top: media.padding.top + kHeaderTopSpacing,
-                    left: 0,
-                    right: 0,
-                    child: AnimatedBuilder(
-                      animation: pageController,
-                      builder: (context, _) {
-                        final offset = pageController.hasClients
-                            ? (pageController.page ?? selectedTab.toDouble())
-                            : selectedTab.toDouble();
-                        return Header(
-                          pageOffset: offset,
-                          onTabChanged: _selectPage,
-                          hasNotification: state.hasNewFavoriteNotification,
-                          onNotificationRead: state.markNotificationsRead,
-                        );
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    left: kSearchBarHorizontalMargin,
-                    right: kSearchBarHorizontalMargin,
-                    bottom: media.padding.bottom +
-                        media.viewInsets.bottom +
-                        kFloatingBarBottomSpacing,
-                    child: BottomDock(
-                      controller: searchController,
-                      state: state,
-                    ),
+                  _RecipePage(
+                    key: const PageStorageKey<String>('saved-recipes'),
+                    state: state,
+                    showingSaved: true,
                   ),
                 ],
-              );
-            },
+              ),
+              Positioned(
+                top: 0,
+                left: kHeaderHorizontalMargin,
+                right: kHeaderHorizontalMargin,
+                child: AnimatedBuilder(
+                  animation: pageController,
+                  builder: (context, _) {
+                    final offset = pageController.hasClients
+                        ? (pageController.page ?? selectedTab.toDouble())
+                        : selectedTab.toDouble();
+                    return Header(
+                      pageOffset: offset,
+                      onTabChanged: _selectPage,
+                      hasNotification: state.hasNewFavoriteNotification,
+                      onNotificationRead: state.markNotificationsRead,
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: BottomDock(
+                  controller: searchController,
+                  state: state,
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -166,10 +159,10 @@ class _RecipePageState extends State<_RecipePage>
     final media = MediaQuery.of(context);
     final listTopPadding = media.padding.top +
         kHeaderTopSpacing +
-        kFloatingBarHeight +
+        kHeaderBarHeight +
         kFloatingContentGap;
-    final listBottomPadding = kFloatingBarHeight +
-        kFloatingBarBottomSpacing +
+    final listBottomPadding = kSearchBarHeight +
+        kSearchBarBottomSpacing +
         media.padding.bottom +
         kFloatingListBottomExtra;
 

@@ -191,7 +191,7 @@ void main() {
     expect(find.byKey(const Key('top-left-network-nav')), findsOneWidget);
     expect(find.byKey(const Key('top-nav-home')), findsOneWidget);
     expect(find.byKey(const Key('top-nav-saved')), findsOneWidget);
-    expect(tester.getSize(find.byType(FloatingIconBar)).height, 48);
+    expect(tester.getSize(find.byType(FloatingIconBar)).height, 44);
     expect(find.byType(FloatingGlass), findsNothing);
   });
 }

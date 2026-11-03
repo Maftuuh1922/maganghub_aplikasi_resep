@@ -154,7 +154,7 @@ void main() {
     expect(find.text('2 pcs'), findsOneWidget);
   });
 
-  testWidgets('floating header has transparent 48dp icon areas',
+  testWidgets('floating header has no pill backdrop, blur, or icon circles',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -164,16 +164,19 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(find.byType(FloatingIconBar)).height, 48);
+    expect(tester.getSize(find.byType(FloatingIconBar)).height, 44);
     expect(tester.getSize(find.byKey(const Key('top-nav-home'))),
-        const Size(52, 48));
+        const Size(52, 44));
     expect(tester.getSize(find.byKey(const Key('top-nav-saved'))),
-        const Size(52, 48));
+        const Size(52, 44));
     expect(tester.getSize(find.byKey(const Key('top-notification-button'))),
-        const Size(48, 48));
+        const Size(44, 44));
     expect(tester.getSize(find.byKey(const Key('top-more-button'))),
-        const Size(48, 48));
+        const Size(44, 44));
     expect(find.byType(FloatingGlass), findsNothing);
+    expect(find.byType(BackdropFilter), findsNothing);
+    expect(find.byType(ClipRRect), findsNothing);
+    expect(find.byType(Card), findsNothing);
   });
 
   testWidgets('search bar uses compact 48dp glass surface', (tester) async {

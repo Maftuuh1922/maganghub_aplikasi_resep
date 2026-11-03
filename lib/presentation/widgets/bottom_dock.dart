@@ -4,12 +4,6 @@ import 'package:flutter/material.dart';
 import '../../logic/app_state.dart';
 import 'glass.dart';
 
-const double kSearchBarHorizontalMargin = 16;
-const double kSearchIconSize = 20;
-const double kSearchIconTextGap = 10;
-const double kSearchTextSize = 15;
-const Color kSearchHintColor = Color(0x8CFFFFFF);
-
 class BottomDock extends StatelessWidget {
   final TextEditingController controller;
   final AppState state;
@@ -22,30 +16,43 @@ class BottomDock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GlassSearchBar(
-        key: const Key('bottom-search-pill'),
         controller: controller,
         onChanged: state.updateSearch,
       );
 }
 
 class GlassSearchBar extends StatelessWidget {
-  final TextEditingController controller;
   final ValueChanged<String> onChanged;
+  final TextEditingController? controller;
 
   const GlassSearchBar({
     super.key,
-    required this.controller,
     required this.onChanged,
+    this.controller,
   });
 
   @override
-  Widget build(BuildContext context) => FloatingGlass(
-        height: kFloatingBarHeight,
-        radius: BorderRadius.circular(kFloatingBarHeight / 2),
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final bottomInset = kSearchBarBottomSpacing +
+        media.padding.bottom +
+        media.viewInsets.bottom;
+    const radius = BorderRadius.all(Radius.circular(kSearchBarHeight / 2));
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        kSearchBarHorizontalMargin,
+        0,
+        kSearchBarHorizontalMargin,
+        bottomInset,
+      ),
+      child: FloatingGlass(
+        key: const Key('bottom-search-pill'),
+        height: kSearchBarHeight,
+        radius: radius,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: kSearchBarHorizontalMargin,
-          ),
+              horizontal: kSearchBarHorizontalMargin),
           child: Row(
             children: [
               const Icon(
@@ -85,5 +92,7 @@ class GlassSearchBar extends StatelessWidget {
             ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }
