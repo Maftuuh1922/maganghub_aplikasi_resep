@@ -165,13 +165,14 @@ void main() {
     );
 
     expect(tester.getSize(find.byType(FloatingIconBar)).height, 48);
-    expect(tester.getSize(find.byKey(const Key('top-nav-home'))), Size(52, 48));
-    expect(
-        tester.getSize(find.byKey(const Key('top-nav-saved'))), Size(52, 48));
+    expect(tester.getSize(find.byKey(const Key('top-nav-home'))),
+        const Size(52, 48));
+    expect(tester.getSize(find.byKey(const Key('top-nav-saved'))),
+        const Size(52, 48));
     expect(tester.getSize(find.byKey(const Key('top-notification-button'))),
-        Size(48, 48));
-    expect(
-        tester.getSize(find.byKey(const Key('top-more-button'))), Size(48, 48));
+        const Size(48, 48));
+    expect(tester.getSize(find.byKey(const Key('top-more-button'))),
+        const Size(48, 48));
     expect(find.byType(FloatingGlass), findsNothing);
   });
 
